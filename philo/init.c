@@ -6,13 +6,13 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2024/05/26 20:32:36 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/02 18:48:35 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosop.h"
 
-static unsigned int	atoui(const char *nptr, int *ok)
+static unsigned int	atoui(const char *nptr, int *errno)
 {
 	unsigned long	res;
 	size_t			cur;
@@ -26,37 +26,36 @@ static unsigned int	atoui(const char *nptr, int *ok)
 		res = res * 10 + nptr[cur ++] - '0';
 		if (res > UINT_MAX)
 		{
-			*ok = 0;
+			*errno = 1;
 			return (0);
 		}
 		smth = 1;
 	}
 	if (smth == 0)
-		*ok = 0;
-	*ok = *ok & 1;
+	{
+		*errno = 1;
+		return (0);
+	}
 	return (res);
 }
 
 static int	parse_args(t_props *p, int argc, char **argv)
 {
-	int	ok;
-
 	p->philos = 0;
 	p->threads = 0;
 	p->forks = 0;
-	ok = 1;
-	p->sz = atoui(argv[1], &ok);
+	p->sz = atoui(argv[1], &p->errno);
 	if (!p->sz)
 		return (usage(1));
 	p->philos = malloc(sizeof(t_philo) * p->sz);
 	if (!p->philos)
 		return (1);
-	p->philos[0].tdie = atoui(argv[2], &ok);
-	p->philos[0].teat = atoui(argv[3], &ok);
-	p->philos[0].tsleep = atoui(argv[4], &ok);
+	p->philos[0].tdie = atoui(argv[2], &p->errno);
+	p->philos[0].teat = atoui(argv[3], &p->errno);
+	p->philos[0].tsleep = atoui(argv[4], &p->errno);
 	if (argc == 6)
-		p->phil_props.full_tgt = atoui(argv[5], &ok);
-	if (!ok)
+		p->philos[0].full_tgt = atoui(argv[5], &p->errno);
+	if (p->errno)
 	{
 		free(p->philos);
 		return (usage(1));
@@ -66,9 +65,9 @@ static int	parse_args(t_props *p, int argc, char **argv)
 
 static int	clone_philo(t_props *p, int f, int t)
 {
-	if (pthread_mutex_init(p->forks[t], 0))
+	if (pthread_mutex_init(&(p->forks[t]), 0))
 		return (1);
-	p->philos[t].i = i;
+	p->philos[t].i = t;
 	p->philos[t].l = &p->forks[t];
 	p->philos[(p->sz + t - 1) % p->sz].r = &p->forks[t];
 	p->philos[t].wait = 0;
@@ -79,26 +78,26 @@ static int	clone_philo(t_props *p, int f, int t)
 	p->philos[t].tsleep = p->philos[f].tsleep;
 	p->philos[t].full_tgt = p->philos[f].full_tgt;
 	p->philos[t].delta = 20;
+	return (0);
 }
 
 int	init(t_props *p, int argc, char **argv)
 {
-	int	i;
+	unsigned int	i;
 
 	if (parse_args(p, argc, argv))
 		return (1);
 	p->enough = 0;
 	p->full_philos = 0;
+	p->errno = 0;
 	p->threads = malloc(sizeof(pthread_t) * p->sz);
 	p->forks = malloc(sizeof(pthread_mutex_t) * p->sz);
 	if (!p->threads || !p->forks)
-	{
-		free(p->threads);
 		return (1);
-	}
-	i = -1;
-	while (++ i < p->sz)
-		clone_philo(p, 0, i);
+	i = 0;
+	while (i < p->sz)
+		if (clone_philo(p, 0, i ++))
+			return (1);
 	if (pthread_mutex_init(&p->print_poll, 0))
 		return (1);
 	return (0);

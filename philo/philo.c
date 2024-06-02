@@ -6,19 +6,22 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/05/26 20:30:49 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/02 18:46:30 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosop.h"
 
-static int	fork(t_philo *p, pthread_mutex_t *f, int action)
+static int	frk(t_philo *p, pthread_mutex_t *f, int action)
 {
+	int	ok;
+
+	ok = 1;
 	if (action == 0)
 	{
 		if (pthread_mutex_lock(f))
 			return (done(p->props, 0, "Failed to take a fork", 1));
-		report(p, TAKES);
+		report(p, TAKES, mtime(&p->props->tstart, &ok));
 		return (0);
 	}
 	if (pthread_mutex_unlock(f))
@@ -26,35 +29,42 @@ static int	fork(t_philo *p, pthread_mutex_t *f, int action)
 	return (0);
 }
 
-int	philo(void *arg)
+static t_usec	wait_n_eat(t_philo *p, int *errno)
+{
+	t_usec	b44k;
+	t_usec	nwait;
+
+	if (*errno || report(p, THINKS, mtime(&p->props->tstart, errno)) || *errno)
+		return (0);
+	b44k = mtime(&p->props->tstart, errno);
+	if (*errno)
+		return (0);
+	usleep(p->wait);
+	if (*errno || frk(p, p->l, 0) || frk(p, p->r, 0))
+		// if he dies waiting for a fork, we can be late to print this
+		return (0);
+	nwait = mtime(&p->props->tstart, errno) - b44k;
+	if (*errno || report(p, EATS, nwait + b44k))
+		return (0);
+	usleep(p->teat);
+	p->times_eaten ++;
+	frk(p, p->l, 1);
+	frk(p, p->r, 1);
+	return (nwait);
+}
+
+void	*philo(void *arg)
 {
 	t_philo	*p;
-	time_t	t;
-	time_t	nwait;
-	int		ok;
+	t_usec	nwait;
 
 	p = (t_philo *)arg;
-	ok = 1;
 	while (1)
 	{
-		if (report(p, THINKS))
-			return (1);
-		t = time(&p->props.time_start, &ok);
-		if (!ok)
-			return (1);
-		usleep(p->wait);
-		if (fork(p, p->l, 0) || fork(p, p->r, 0))
-			// if he dies waiting for a fork, we can be late to print this
-			return (1);
-		nwait = time(p->props.time_start) - t;
-		if (nwait + p->tsleep > p->tdie)
-			return (fork(p, p->l, 1) | fork(p, p->r, 1) | report(p, DIES));
-		if (report(p, EATS))
-			return (1);
-		usleep(p->teat);
-		p->times_eaten ++;
-		if (fork(p, p->l, 1) || fork(p, p->r, 1) || report(p, SLEEPS))
-			return (1);
+		nwait = wait_n_eat(p, &p->props->errno);
+		if (report(p, SLEEPS, mtime(&p->props->tstart, &p->props->errno))
+			|| p->props->errno)
+			return (0);
 		usleep(p->tsleep);
 		if (nwait - p->wait > p->delta)
 		{
