@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/02 18:49:44 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/02 19:15:39 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,11 @@ t_usec	mtime(t_usec *t, int *errno)
 	if (!t)
 		return (tv.tv_sec * 1000000 + tv.tv_usec);
 	return (tv.tv_sec * 1000000 + tv.tv_usec - *t);
+}
+
+int		assign(int *to, int val, int ret)
+{
+	if (to)
+		*to = val;
+	return (ret);
 }

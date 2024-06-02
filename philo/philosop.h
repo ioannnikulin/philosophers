@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/02 18:18:22 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/02 19:31:33 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,15 @@ typedef struct s_philo
 	pthread_mutex_t	*l;
 	pthread_mutex_t	*r;
 	int				times_eaten;
+	pthread_mutex_t	m_times_eaten;
+	int				dead;
+	pthread_mutex_t	m_dead;
 	t_usec			wait;
 	t_usec			tdie;
 	t_usec			teat;
 	t_usec			tsleep;
 	t_usec			last_meal;
+	pthread_mutex_t	m_last_meal;
 	int				full_tgt;
 	time_t			delta;
 	t_props			*props;
@@ -71,4 +75,5 @@ void	*philo(void *arg);
 int		report(t_philo *p, int action, t_usec t);
 int		done(t_props *p, int print_unlock, char *msg, int ret);
 int		finalize(t_props *p, char *msg, int ret);
+int		assign(int *to, int val, int ret);
 #endif
