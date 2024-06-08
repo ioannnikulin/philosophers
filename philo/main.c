@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:07:40 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/02 18:52:46 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/08 19:15:37 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,11 @@ has to eat to allow the simulation to end\n");
 	return (ret);
 }
 
+int	start_philo(t_props *p, int i)
+{
+	return (pthread_create(p->threads[i], 0, &philo, p->philos[i]));
+}
+
 int	main(int argc, char **argv)
 {
 	t_props			props;
@@ -34,24 +39,25 @@ int	main(int argc, char **argv)
 
 	if (argc < 5 || argc > 6)
 		return (usage(1));
+	mbzero(&props, sizeof(t_props));
 	if (init(&props, argc, argv))
-		return (finalize(&props, "Initialization error", 1));
+		return (1);
 	props.tstart = mtime(0, &props.errno);
 	if (props.errno)
-		return (finalize(&props, "Timer error", 1));
+		return (finalize(&props, STAGE_2, TX_ERR_TIMER, 1));
 	setup(&props);
 	i = 0;
-	while (i < props.sz)
+	while (!props.enough && i < props.sz)
 	{
-		if (pthread_create(&props.threads[i], 0, &philo, &props.philos[i]))
-			return (finalize(&props, "Failed to start a thread", 1));
+		if (start_philo(&props, i))
+			return (finalize(&props, STAGE_3, TX_ERR_THREAD_START, 1));
 		i ++;
 	}
 	i = 0;
 	while (i < props.sz)
 	{
 		if (pthread_join(props.threads[i ++], 0))
-			return (finalize(&props, "Failed to join a thread", 1));
+			return (finalize(&props, STAGE_3, TX_ERR_THREAD_JOIN, 1));
 	}
-	return (finalize(&props, "Simulation over", 0));
+	return (finalize(&props, STAGE_4, TX_OVER, 0));
 }
