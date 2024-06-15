@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/08 20:33:46 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/15 19:23:29 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static int	frk(t_philo *p, pthread_mutex_t *f, int action)
 			return (finalize(0, 0, TX_ERR_FORK_TAKE, 1));
 		report(p, TAKES, mtime(&p->props->tstart, &errno));
 		if (errno)
-			return (finalize(0, 0, TX_ERR_FORK_TAKE, 1));
+			return (1);
 		return (0);
 	}
 	if (m_unlock(f))
@@ -48,20 +48,18 @@ static t_usec	wait_n_eat(t_philo *p, int *errno)
 	if (*errno || report(p, EATS, nwait + b44k))
 		return (assign(errno, 1, 0));
 	usleep(p->teat);
-	p->times_eaten ++;
-	frk(p, p->l, 1);
-	frk(p, p->r, 1);
+	tsint_add(&p->times_eaten, 1, errno);
+	if (*errno || frk(p, p->l, 1) || frk(p, p->r, 1))
+		return (assign(errno, 1, 0));
 	return (nwait);
 }
 
 static int	birth(t_philo **p, void *arg, int *errno)
 {
 	*p = (t_philo *)arg;
-	*errno = 0;
-	if (m_lock(&p->state))
-		return (1);
-	p->state = THINKS;
-	if (m_unlock(&p->state))
+	assign(errno, 0, 0);
+	tsint_set(&((*p)->state), THINKS, errno);
+	if (*errno)
 		return (1);
 	return (0);
 }
@@ -82,6 +80,7 @@ void	*philo(void *arg)
 	t_philo	*p;
 	t_usec	nwait;
 	int		errno;
+	int		state;
 
 	if (!birth(&p, arg, &errno))
 		return (arg);
@@ -94,11 +93,8 @@ void	*philo(void *arg)
 			return (arg);
 		usleep(p->tsleep);
 		restrat(p, nwait);
-		if (m_lock(p->state))
-			return (arg);
-		if (p->state == ENOUGH || p->state == DIES)
-			return (arg);
-		if (m_unlock(p->state))
+		state = tsint_get(&p->state, &errno);
+		if (errno || state == ENOUGH || state == DIES)
 			return (arg);
 	}
 }

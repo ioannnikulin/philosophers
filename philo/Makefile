@@ -6,7 +6,7 @@ INCLUDES = -I.
 
 all: $(NAME)
 
-SRCS = init.c philo.c report.c setup.c utils.c main.c finalize.c wrappers.c
+SRCS = init.c philo.c report.c setup.c utils.c main.c finalize.c wrappers.c t_s_int.c t_s_usec.c monitor.c
 OBJS = $(SRCS:.c=.o)
 
 $(NAME): $(OBJS)

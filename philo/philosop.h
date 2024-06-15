@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/08 20:41:15 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/15 19:33:44 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,13 @@
 # define TX_ERR_MUTEX_STATE_UNLOCK "Simulation state mutex unlock failure"
 # define TX_ERR_MUTEX_IND_STATE_LOCK "Philosopher state mutex lock failure"
 # define TX_ERR_MUTEX_IND_STATE_UNLOCK "Philosopher state mutex unlock failure"
+# define TX_ERR_MUTEX_IND_LAST_MEAL_LOCK "Philosopher last meal mutex lock failure"
+# define TX_ERR_MUTEX_IND_LAST_MEAL_UNLOCK "Philosopher last meal mutex unlock \
+	failure"
+# define TX_ERR_MUTEX_IND_TIMES_EATEN_LOCK "Philosopher times eaten mutex lock \
+	failure"
+# define TX_ERR_MUTEX_IND_TIMES_EATEN_UNLOCK "Philosopher times eaten mutex \
+	unlock failure"
 # define TX_ERR_MUTEX_KILL "Mutex destruction failure"
 # define TX_ERR_THREAD_START "Failed to start a thread"
 # define TX_ERR_THREAD_JOIN "Failed to join a thread"
@@ -53,9 +60,9 @@
 # define TX_FULL "Everybody has eaten enough"
 # define TX_LATE "Death was reported too late"
 
-# define FREE_PHILOS 1 // make sure to DESTROY_M_IN_PHILO
+# define FREE_PHILOS 1 /* make sure to DESTROY_M_IN_PHILO */
 # define FREE_THREADS 2
-# define FREE_FORKS 4 // make sure to DESTROY_M_FORKS
+# define FREE_FORKS 4 /* make sure to DESTROY_M_FORKS */
 # define UNLOCK_PRINT 8
 # define DESTROY_M_FORKS 16
 # define DESTROY_M_DEADS 32
@@ -76,8 +83,17 @@ typedef struct s_s_int
 {
 	int		v;
 	t_mutex	m;
-	int		e;
+	char	*e_lock;
+	char	*e_unlock;
 }	t_s_int;
+
+typedef struct s_s_usec
+{
+	t_usec	v;
+	t_mutex	m;
+	char	*e_lock;
+	char	*e_unlock;
+}	t_s_usec;
 
 typedef struct s_props
 {
@@ -88,39 +104,58 @@ typedef struct s_props
 	t_mutex			print_poll;
 	t_s_int			enough;
 	t_usec			tstart;
-	unsigned int	full_philos;
+	unsigned int	full_philos; /* controlled by print_poll too */
 	int				errno;
 }	t_props;
 
 typedef struct s_philo
 {
-	int		i;
-	t_mutex	*l;
-	t_mutex	*r;
-	t_s_int	times_eaten;
-	t_s_int	state;
-	t_usec	wait;
-	t_usec	tdie;
-	t_usec	teat;
-	t_usec	tsleep;
-	t_usec	last_meal;
-	t_mutex	m_last_meal;
-	int		full_tgt;
-	time_t	delta;
-	t_props	*props;
+	int			i; 
+	/*
+	** initially -1 to mark uninitialized.
+	** if initalization for later philos fails,
+	** we know that non-neg here means that we should free it
+	*/
+	t_mutex		*l;
+	t_mutex		*r;
+	t_s_int		times_eaten;
+	t_s_int		state;
+	t_usec		wait;
+	t_usec		tdie;
+	t_usec		teat;
+	t_usec		tsleep;
+	t_s_usec	last_meal;
+	/*
+	 ** initially -1,
+	 ** set to 0 in setup()
+	 ** don't remember what for though :(
+	 */
+	int			full_tgt;
+	time_t		delta;
+	t_props		*props;
 }	t_philo;
 
-int		usage(int ret);
-int		init(t_props *p, int argc, char **argv);
-int		setup(t_props *p);
-t_usec	mtime(t_usec *t, int *ok);
-void	*philo(void *arg);
-int		report(t_philo *p, int action, t_usec t);
-int		finalize(t_props *p, char *msg, int ret);
-int		assign(int *to, int val, int ret);
-int		mfree(int choice, void **w, int sz, int ret);
-int		mbzero(void *f, int bytes, int ret);
+int			usage(int ret);
+int			init(t_props *p, int argc, char **argv);
+int			setup(t_props *p);
+t_usec		mtime(t_usec *t, int *ok);
+void		*philo(void *arg);
+int			report(t_philo *p, int action, t_usec t);
+int			finalize(t_props *p, int mode, char *msg, int ret);
+int			assign(int *to, int val, int ret);
+int			mfree(int choice, void **w, int sz, int ret);
+int			mbzero(void *f, int bytes, int ret);
+void		*mcalloc(size_t sz);
 
-int		m_init(t_mutex *m);
-int		m_kill(t_mutex *m);
+int			m_init(t_mutex *m);
+int			m_kill(t_mutex *m);
+int			m_lock(t_mutex *m);
+int			m_unlock(t_mutex *m);
+
+int			tsint_get(t_s_int *i, int *errno);
+t_s_int		*tsint_set(t_s_int *i, int val, int *errno);
+t_s_int		*tsint_add(t_s_int *i, int val, int *errno);
+t_s_usec	tsusec_get(t_s_usec *i, int *errno);
+t_s_usec	*tsusec_set(t_s_usec *i, t_s_usec val, int *errno);
+t_s_usec	*tsusec_add(t_s_usec *i, t_s_usec val, int *errno);
 #endif

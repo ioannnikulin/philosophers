@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/08 17:15:30 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/15 19:16:17 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,18 +41,21 @@ static unsigned int	atoui(const char *nptr, int *errno)
 
 static int	parse_args(t_props *p, int argc, char **argv)
 {
-	int	i;
+	unsigned int	i;
 
 	p->sz = atoui(argv[1], &p->errno);
 	if (!p->sz)
 		return (usage(finalize(0, 0, TX_ERR_NUM_FORMAT, 1)));
-	p->philos = malloc(sizeof(t_philo) * p->sz);
+	p->philos = mcalloc(sizeof(t_philo) * p->sz);
 	if (!p->philos)
 		return (finalize(0, 0, TX_ERR_MALLOC, 1));
-	mbzero(p->philos, p->sz * sizeof(t_philo));
-	i = -1;
-	while (++ i < p->sz)
-		assign(p->philo[i].i, -1, assign(p->philo[i].last_meal, -1, 0));
+	i = 0;
+	while (i < p->sz)
+	{
+		p->philos[i].i = -1;
+		p->philos[i].last_meal.v = -1;
+		i ++;
+	}
 	p->philos[0].tdie = atoui(argv[2], &p->errno);
 	p->philos[0].teat = atoui(argv[3], &p->errno);
 	p->philos[0].tsleep = atoui(argv[4], &p->errno);
@@ -63,11 +66,23 @@ static int	parse_args(t_props *p, int argc, char **argv)
 	return (0);
 }
 
+static int	init_mutexes(t_philo *p)
+{
+	if (m_init(&p->times_eaten.m) || m_init(&p->state.m)
+	 || m_init(&p->last_meal.m))
+		return (1);
+	p->times_eaten.e_lock = TX_ERR_MUTEX_IND_TIMES_EATEN_LOCK;
+	p->times_eaten.e_unlock = TX_ERR_MUTEX_IND_TIMES_EATEN_UNLOCK;
+	p->last_meal.e_lock = TX_ERR_MUTEX_IND_LAST_MEAL_LOCK;
+	p->last_meal.e_unlock = TX_ERR_MUTEX_IND_LAST_MEAL_UNLOCK;
+	p->state.e_lock = TX_ERR_MUTEX_IND_STATE_LOCK;
+	p->state.e_unlock = TX_ERR_MUTEX_IND_STATE_UNLOCK;
+	return (0);
+}
+
 static int	clone_philo(t_props *p, int f, int t)
 {
-	if (m_init(&(p->forks[t])) || m_init(&(p->philos[t].m_times_eaten))
-	 	|| m_init(&(p->philos[t].m_dead))
-		|| m_init(&(p->philos[t].m_last_meal)))
+	if (m_init(&(p->forks[t])) || init_mutexes(&p->philos[t]))
 		return (finalize(p, STAGE_2, TX_ERR_MUTEX_INIT, 1));
 	p->philos[t].i = t;
 	p->philos[t].l = &p->forks[t];
@@ -87,11 +102,11 @@ int	init(t_props *p, int argc, char **argv)
 
 	if (parse_args(p, argc, argv))
 		return (1);
-	p->threads = malloc(sizeof(pthread_t) * p->sz);
-	p->forks = malloc(sizeof(t_mutex) * p->sz);
+	p->threads = mcalloc(sizeof(pthread_t) * p->sz);
+	p->forks = mcalloc(sizeof(t_mutex) * p->sz);
 	if (!p->threads || !p->forks)
 		return (finalize(p, STAGE_1, TX_ERR_MALLOC, 1));
-	if (m_init(&p->print_poll, 0))
+	if (m_init(&p->print_poll))
 		return (finalize(p, STAGE_1, TX_ERR_MUTEX_INIT, 1));
 	i = 0;
 	while (i < p->sz)

@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/08 17:02:11 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/15 19:07:10 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,11 @@ t_usec	mtime(t_usec *t, int *errno)
 {
 	struct timeval	tv;
 
-	if (errno && *errno)
-		return (0);
+	assign(errno, 0, 0);
 	if (gettimeofday(&tv, 0))
 	{
-		if (errno)
-			*errno = 1;
-		printf("Timer error\n");
-		return (0);
+		printf("%s\n", TX_ERR_TIMER);
+		return (assign(errno, 1, 0));
 	}
 	if (!t)
 		return (tv.tv_sec * 1000000 + tv.tv_usec);
@@ -55,4 +52,15 @@ int	mfree(int choice, void **w, int sz, int ret)
 		return (ret);
 	free(*w);
 	return (mbzero(*w, sz, ret));
+}
+
+void	*mcalloc(size_t sz)
+{
+	void	*res;
+
+	res = calloc(sz);
+	if (!res)
+		return (0);
+	mbzero(res, sz, 0);
+	return (res);
 }

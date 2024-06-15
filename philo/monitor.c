@@ -6,63 +6,79 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/08 20:40:30 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/15 18:14:56 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosop.h"
 
-static int	end(t_props *p, unsigned int i)
+static int	end(t_props *p)
 {
-	if (m_lock(&p->philos[i].m_state))
-		finalize(0, 0, TX_ERR_MUTEX_IND_STATE_LOCK, 0);
-	p->philos[i].state = ENOUGH;
-	if (m_unlock(&p->philos[i].m_state))
-		finalize(0, 0, TX_ERR_MUTEX_IND_STATE_UNLOCK, 0);
+	unsigned int	i;
+
+	i = 0;
+	while (i < p->sz)
+	{
+		tsint_set(&p->philos[i].state, ENOUGH, &p->errno);
+		if (p->errno)
+			finalize(0, 0, 0, 0);
+		i ++;
+	}
 	return (0);
 }
-static int	extract(t_s_int *var, int *errno)
-{
-	int	ret;
 
-	if (m_lock(&m))
-		finalize(0, 0, TX_ERR_MUTEX_IND_STATE_LOCK, 0);
-	ret = *var;
-	if (m_unlock(&p->philos[i].m_state))
-		finalize(0, 0, TX_ERR_MUTEX_IND_STATE_UNLOCK, 0);
-}
 static int	check(t_props *p, unsigned int i)
 {
-}
+	unsigned int	i;
+	int				state;
+	t_usec			last_meal;
+	t_usec			hungry_for;
 
-static void *r(void *ret, int ignore)
-{
-	(void)ignore;
-	return (ret);
+	i = 0;
+	while (i < p->sz)
+	{
+		state = tsint_get(&p->philos[i].state, &p->errno);
+		if (p->errno)
+			return (2);
+		if (state == DIES)
+			return (DIES);
+		last_meal = tsusec_get(&p->philos[i].last_meal, &p->errno);
+		if (p->errno)
+			return (2);
+		hungry_for = mtime(&last_meal, &p->errno);
+		if (p->errno)
+			return (2);
+		if (hungry_for > p->philos[i].tdie)
+		{
+			report(p->philos[i], DIES, last_meal + p->philos[i].tdie);
+			return (DIES);
+		}
+		i ++;
+	}
+	return (0);
 }
 
 void	*moni(void *a)
 {
-	t_props			*p;
-	int				enough;
-	unsigned int	i;
+	t_props	*p;
+	int		enough;
 
 	p = (t_props *)a;
 	while (1)
 	{
-		if (m_lock(&p->m_enough))
-			return (r(a, finalize(0, REPORT_FATAL, TX_ERR_MUTEX_STATE_LOCK, 0)));
-		enough = p->enough;
-		if (m_unlock(&p->m_enough))
-			return (r(a, finalize(0, REPORT_FATAL, TX_ERR_MUTEX_STATE_UNLOCK, 0)));
-		i = 0;
-		while (i < p->sz)
+		enough = tsint_get(&p->enough, &p->errno);
+		if (p->errno)
 		{
-			i += (enough && end(p, i)) & 0;
-			i += (!enough && check(p, i)) & 0;
-			i ++;
+			tsint_set(p->enough, ENOUGH, &p->errno);
+			return (a);
 		}
 		if (enough)
-			break ;
+		{
+			end(p);
+			return (a);
+		}
+		enough = check(p);
+		if (enough)
+			tsint_set(p->enough, ENOUGH, &p->errno);
 	}
 }
