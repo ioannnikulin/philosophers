@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/15 19:23:29 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/15 19:39:53 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static t_usec	wait_n_eat(t_philo *p, int *errno)
 	if (*errno || report(p, EATS, nwait + b44k))
 		return (assign(errno, 1, 0));
 	usleep(p->teat);
-	tsint_add(&p->times_eaten, 1, errno);
+	p->times_eaten ++;
 	if (*errno || frk(p, p->l, 1) || frk(p, p->r, 1))
 		return (assign(errno, 1, 0));
 	return (nwait);

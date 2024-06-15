@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/15 19:33:44 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/15 20:32:34 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,6 @@
 # define TX_ERR_MUTEX_IND_LAST_MEAL_LOCK "Philosopher last meal mutex lock failure"
 # define TX_ERR_MUTEX_IND_LAST_MEAL_UNLOCK "Philosopher last meal mutex unlock \
 	failure"
-# define TX_ERR_MUTEX_IND_TIMES_EATEN_LOCK "Philosopher times eaten mutex lock \
-	failure"
-# define TX_ERR_MUTEX_IND_TIMES_EATEN_UNLOCK "Philosopher times eaten mutex \
-	unlock failure"
 # define TX_ERR_MUTEX_KILL "Mutex destruction failure"
 # define TX_ERR_THREAD_START "Failed to start a thread"
 # define TX_ERR_THREAD_JOIN "Failed to join a thread"
@@ -65,12 +61,12 @@
 # define FREE_FORKS 4 /* make sure to DESTROY_M_FORKS */
 # define UNLOCK_PRINT 8
 # define DESTROY_M_FORKS 16
-# define DESTROY_M_DEADS 32
-# define DESTROY_M_LAST_MEALS 64
-# define DESTROY_M_TIMES_EATEN 128
-# define DESTROY_M_IN_PHILO (128 + 64 + 32)
+# define DESTROY_M_ENOUGH 32
+# define DESTROY_M_LAST_MEAL 64
+# define DESTROY_M_STATE 128
+# define DESTROY_M_IN_PHILO (128 + 64)
 # define DESTROY_M_PRINT 256
-# define REPORT_FATAL 512
+# define REPORT_FATAL 512 /* don't combine with anything except for UNLOCK_PRINT */
 # define STAGE_1 (1 + 2 + 4)
 # define STAGE_2 (1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256)
 
@@ -106,6 +102,7 @@ typedef struct s_props
 	t_usec			tstart;
 	unsigned int	full_philos; /* controlled by print_poll too */
 	int				errno;
+	pthread_t		monitor;
 }	t_props;
 
 typedef struct s_philo
@@ -118,7 +115,7 @@ typedef struct s_philo
 	*/
 	t_mutex		*l;
 	t_mutex		*r;
-	t_s_int		times_eaten;
+	int			times_eaten;
 	t_s_int		state;
 	t_usec		wait;
 	t_usec		tdie;
@@ -140,6 +137,7 @@ int			init(t_props *p, int argc, char **argv);
 int			setup(t_props *p);
 t_usec		mtime(t_usec *t, int *ok);
 void		*philo(void *arg);
+void		*moni(void *a);
 int			report(t_philo *p, int action, t_usec t);
 int			finalize(t_props *p, int mode, char *msg, int ret);
 int			assign(int *to, int val, int ret);
@@ -155,7 +153,7 @@ int			m_unlock(t_mutex *m);
 int			tsint_get(t_s_int *i, int *errno);
 t_s_int		*tsint_set(t_s_int *i, int val, int *errno);
 t_s_int		*tsint_add(t_s_int *i, int val, int *errno);
-t_s_usec	tsusec_get(t_s_usec *i, int *errno);
-t_s_usec	*tsusec_set(t_s_usec *i, t_s_usec val, int *errno);
-t_s_usec	*tsusec_add(t_s_usec *i, t_s_usec val, int *errno);
+t_usec		tsusec_get(t_s_usec *i, int *errno);
+t_s_usec	*tsusec_set(t_s_usec *i, t_usec val, int *errno);
+t_s_usec	*tsusec_add(t_s_usec *i, t_usec val, int *errno);
 #endif

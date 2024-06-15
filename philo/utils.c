@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/15 19:07:10 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/15 19:42:26 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	*mcalloc(size_t sz)
 {
 	void	*res;
 
-	res = calloc(sz);
+	res = malloc(sz);
 	if (!res)
 		return (0);
 	mbzero(res, sz, 0);
