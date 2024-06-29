@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/15 20:28:53 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/29 17:54:09 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static int	check(t_props *p)
 			return (2);
 		if (hungry_for > p->philos[i].tdie)
 		{
-			report(&p->philos[i], DIES, last_meal + p->philos[i].tdie);
+			report(&p->philos[i], DIES, last_meal + p->philos[i].tdie - p->tstart);
 			tsint_set(&p->philos[i].state, DIES, &p->errno);
 			return (DIES);
 		}

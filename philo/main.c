@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:07:40 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/15 20:31:55 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/29 18:08:37 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 int	usage(int ret)
 {
-	printf("Usage:./philo Q D E S F\n\
-\t- Q (quantity)		- unsigned int, amount of philosophers (and forks)\n\
-\t- D (dies)			- unsigned int, time in milliseconds since last meal \
-(start of simulation considered a meal) a philosopher can live without food\n\
-\t- E (eats)			- unsigned int, time in milliseconds it takes a \
-philosopher to eat after acquiring a fork\n\
-\t- S (sleeps)			- unsigned int, time in milliseconds a philosopher \
-has to sleep passively right after finishing a meal\n\
+	printf("Usage:./philo Q D E S F\n\n\
+\t- Q (quantity)		- unsigned int, amount of philosophers (and forks)\n\n\
+\t- D (dies)		- unsigned int, time in milliseconds since last meal \
+(start of simulation considered a meal) a philosopher can live without food\n\n\
+\t- E (eats)		- unsigned int, time in milliseconds it takes a \
+philosopher to eat after acquiring a fork\n\n\
+\t- S (sleeps)		- unsigned int, time in milliseconds a philosopher \
+has to sleep passively right after finishing a meal\n\n\
 \t- F (full; optional) 	- unsigned int, number of times every philosopher \
 has to eat to allow the simulation to end\n");
 	return (ret);
@@ -53,15 +53,19 @@ int	main(int argc, char **argv)
 			return (finalize(&props, STAGE_2, TX_ERR_THREAD_START, 1));
 		i ++;
 	}
+	#ifdef MONITOR
 	if (pthread_create(&props.monitor, 0, moni, &props))
 			return (finalize(&props, STAGE_2, TX_ERR_THREAD_START, 1));
+	#endif
 	i = 0;
 	while (i < props.sz)
 	{
 		if (pthread_join(props.threads[i ++], 0))
 			return (finalize(&props, STAGE_2, TX_ERR_THREAD_JOIN, 1));
 	}
+	#ifdef MONITOR
 	if (pthread_join(props.monitor, 0))
 		return (finalize(&props, STAGE_2, TX_ERR_THREAD_JOIN, 1));
-	return (finalize(&props, STAGE_2, TX_OVER, 0));
+	#endif
+	return (finalize(0, 0, TX_OVER, 0));
 }

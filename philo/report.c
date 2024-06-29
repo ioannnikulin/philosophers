@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/15 19:54:32 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/29 16:36:17 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,10 @@ int	report(t_philo *p, int action, t_usec t)
 	if (t > MAX_MICROS || t < 0)
 		return (finalize(p->props, REPORT_FATAL | UNLOCK_PRINT, TX_MAX_TIME, 1));
 	if (tsint_get(&p->props->enough, &p->props->errno) == ENOUGH || p->props->errno)
-		return (finalize(0, 0, 0, 1));
+		return (finalize(p->props, UNLOCK_PRINT, 0, 1));
 	state = tsint_get(&p->state, &p->props->errno);
 	if (state == DIES || p->props->errno)
-		return (finalize(0, 0, 0, 1));
+		return (finalize(p->props, UNLOCK_PRINT, 0, 1));
 	if (action == DIES)
 		return (act_die(p, t));
 	else if (action == TAKES)

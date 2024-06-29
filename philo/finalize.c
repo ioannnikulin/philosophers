@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/15 20:24:35 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/29 18:05:43 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,10 @@ int	finalize(t_props *p, int mode, char *msg, int ret)
 		}
 		mfree(mode & FREE_FORKS, (void*)&p->forks, sizeof(t_mutex *) * p->sz, 0);
 	}
-	if (*msg)
+	if (msg)
 		printf("%s\n", msg);
+	if (mode & EXIT)
+		exit(1);
 	return (ret);
 }
 /* for perfect execution: message should be printed on print mutex */

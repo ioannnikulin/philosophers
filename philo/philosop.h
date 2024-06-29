@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/15 20:32:34 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/29 18:11:50 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <sys/time.h>
 # include <pthread.h>
 # include <limits.h>
+
+# define MONITOR
 
 # define NEWBORN 0
 # define TAKES 1
@@ -67,8 +69,9 @@
 # define DESTROY_M_IN_PHILO (128 + 64)
 # define DESTROY_M_PRINT 256
 # define REPORT_FATAL 512 /* don't combine with anything except for UNLOCK_PRINT */
-# define STAGE_1 (1 + 2 + 4)
-# define STAGE_2 (1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256)
+# define EXIT 1024 /* don't combine with anything except for UNLOCK_PRINT */
+# define STAGE_1 (1 + 2 + 4 + 1024)
+# define STAGE_2 (1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256 + 1024)
 
 struct					s_philo;
 
