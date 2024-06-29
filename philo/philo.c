@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/29 18:11:05 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/29 20:57:32 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@ static int	frk(t_philo *p, pthread_mutex_t *f, int action)
 	if (action == 0)
 	{
 		if (m_lock(f))
-			return (finalize(0, 0, TX_ERR_FORK_TAKE, 1));
+			return (finalize(0, 0, msg(TX_ERR_FORK_TAKE, 0), 1));
 		report(p, TAKES, mtime(&p->props->tstart, &errno));
 		if (errno)
 			return (1);
 		return (0);
 	}
 	if (m_unlock(f))
-		return (finalize(0, 0, TX_ERR_FORK_PUT, 1));
+		return (finalize(0, 0, msg(TX_ERR_FORK_PUT, 0), 1));
 	return (0);
 }
 
@@ -35,6 +35,7 @@ static t_usec	wait_n_eat(t_philo *p, int *errno)
 {
 	t_usec	b44k;
 	t_usec	nwait;
+	t_usec	started_eating;
 
 	if (*errno || report(p, THINKS, mtime(&p->props->tstart, errno)) || *errno)
 		return (assign(errno, 1, 0));
@@ -44,11 +45,16 @@ static t_usec	wait_n_eat(t_philo *p, int *errno)
 	usleep(p->wait);
 	if (*errno || frk(p, p->l, 0) || frk(p, p->r, 0))
 		return (assign(errno, 1, 0));
-	nwait = mtime(&p->props->tstart, errno) - b44k;
-	if (*errno || report(p, EATS, nwait + b44k))
+	tsint_set(&p->state, EATS, errno);
+	if (*errno)
+		return (0);
+	started_eating = mtime(&p->props->tstart, errno);
+	nwait = started_eating - b44k;
+	if (*errno || report(p, EATS, started_eating))
 		return (assign(errno, 1, 0));
 	usleep(p->teat);
 	p->times_eaten ++;
+	tsusec_set(&p->last_meal, started_eating + p->teat, errno);
 	if (*errno || frk(p, p->l, 1) || frk(p, p->r, 1))
 		return (assign(errno, 1, 0));
 	return (nwait);
@@ -56,9 +62,17 @@ static t_usec	wait_n_eat(t_philo *p, int *errno)
 
 static int	birth(t_philo **p, void *arg, int *errno)
 {
+	t_usec	first_meal;
+
 	*p = (t_philo *)arg;
 	assign(errno, 0, 0);
 	tsint_set(&((*p)->state), THINKS, errno);
+	if (*errno)
+		return (1);
+	first_meal = mtime(&(*p)->props->tstart, errno);
+	if (*errno)
+		return (1);
+	tsusec_set(&((*p)->last_meal), first_meal, errno);
 	if (*errno)
 		return (1);
 	return (0);
@@ -71,8 +85,14 @@ static void	restrat(t_philo *p, t_usec nwait)
 		if (nwait > p->tdie * 0.8)
 			p->wait = 0;
 		else
-			p->wait = nwait;
+			p->wait = 0;
 	}
+}
+
+static void *ret(int i, void *arg)
+{
+	printf("exiting %i\n", i);
+	return (arg);
 }
 
 void	*philo(void *arg)
@@ -83,18 +103,21 @@ void	*philo(void *arg)
 	int		state;
 
 	if (birth(&p, arg, &errno))
-		return (arg);
+		return (ret(p->i, arg));
 	while (1)
 	{
 		nwait = wait_n_eat(p, &errno);
 		if (errno)
-			return (arg);
+			return (ret(p->i, arg));
+		tsint_set(&p->state, SLEEPS, &errno);
+		if (errno)
+			return (0);
 		if (report(p, SLEEPS, mtime(&p->props->tstart, &errno)) || errno)
-			return (arg);
+			return (ret(p->i, arg));
 		usleep(p->tsleep);
 		restrat(p, nwait);
 		state = tsint_get(&p->state, &errno);
 		if (errno || state == ENOUGH || state == DIES)
-			return (arg);
+			return (ret(p->i, arg));
 	}
 }

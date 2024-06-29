@@ -6,11 +6,26 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/15 19:42:26 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/29 21:00:27 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosop.h"
+
+t_usec	mmtime(t_usec *t, int *errno)
+{
+	struct timeval	tv;
+
+	assign(errno, 0, 0);
+	if (gettimeofday(&tv, 0))
+	{
+		printf("%s\n", TX_ERR_TIMER);
+		return (assign(errno, 1, 0));
+	}
+	if (!t)
+		return (tv.tv_sec * 1000000 + tv.tv_usec);
+	return (tv.tv_sec * 1000000 + tv.tv_usec - *t);
+}
 
 t_usec	mtime(t_usec *t, int *errno)
 {

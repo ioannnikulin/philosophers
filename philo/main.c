@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:07:40 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/29 18:08:37 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/29 20:57:05 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,28 +44,29 @@ int	main(int argc, char **argv)
 		return (1);
 	props.tstart = mtime(0, &props.errno);
 	if (props.errno)
-		return (finalize(&props, STAGE_2, TX_ERR_TIMER, 1));
+		return (finalize(&props, STAGE_2, msg(TX_ERR_TIMER, 0), 1));
 	setup(&props);
 	i = 0;
 	while (i < props.sz)
 	{
 		if (start_philo(&props, i))
-			return (finalize(&props, STAGE_2, TX_ERR_THREAD_START, 1));
+			return (finalize(&props, STAGE_2, msg(TX_ERR_THREAD_START, 0), 1));
 		i ++;
 	}
 	#ifdef MONITOR
 	if (pthread_create(&props.monitor, 0, moni, &props))
-			return (finalize(&props, STAGE_2, TX_ERR_THREAD_START, 1));
+			return (finalize(&props, STAGE_2, msg(TX_ERR_THREAD_START, 0), 1));
 	#endif
 	i = 0;
 	while (i < props.sz)
 	{
-		if (pthread_join(props.threads[i ++], 0))
-			return (finalize(&props, STAGE_2, TX_ERR_THREAD_JOIN, 1));
+		if (pthread_join(props.threads[i], 0))
+			return (finalize(&props, STAGE_2, msg(TX_ERR_THREAD_JOIN, 0), 1));
+		i ++;
 	}
 	#ifdef MONITOR
 	if (pthread_join(props.monitor, 0))
-		return (finalize(&props, STAGE_2, TX_ERR_THREAD_JOIN, 1));
+		return (finalize(&props, STAGE_2, msg(TX_ERR_THREAD_JOIN, 0), 1));
 	#endif
-	return (finalize(0, 0, TX_OVER, 0));
+	return (finalize(0, 0, msg(TX_OVER, 0), 0));
 }

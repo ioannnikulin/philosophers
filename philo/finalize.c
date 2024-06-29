@@ -6,11 +6,20 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/29 18:05:43 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/29 19:07:13 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosop.h"
+
+t_fin_param	msg(char *msg, t_usec time)
+{
+	t_fin_param	res;
+
+	res.msg = msg;
+	res.time = time;
+	return (res);
+}
 
 static int	mutex(int choice, t_mutex *m)
 {
@@ -42,14 +51,14 @@ static int	mutexes(t_props *p, int mode)
 	}
 	if (mode & UNLOCK_PRINT)
 		if (m_unlock(&p->print_poll))
-			finalize(0, 0, TX_ERR_MUTEX_PRINT_UNLOCK, 0);
+			finalize(0, 0, msg(TX_ERR_MUTEX_PRINT_UNLOCK, 0), 0);
 	ret = ret | mutex(mode & DESTROY_M_PRINT, &p->print_poll);
 	if (ret)
-		return (finalize(0, 0, TX_ERR_MUTEX_KILL, 1));
-	return (finalize(0, 0, 0, 0));
+		return (finalize(0, 0, msg(TX_ERR_MUTEX_KILL, 0), 1));
+	return (finalize(0, 0, msg(0, 0), 0));
 }
 
-int	finalize(t_props *p, int mode, char *msg, int ret)
+int	finalize(t_props *p, int mode, t_fin_param msg, int ret)
 {
 	unsigned int	i;
 
@@ -68,8 +77,12 @@ int	finalize(t_props *p, int mode, char *msg, int ret)
 		}
 		mfree(mode & FREE_FORKS, (void*)&p->forks, sizeof(t_mutex *) * p->sz, 0);
 	}
-	if (msg)
-		printf("%s\n", msg);
+	if (msg.msg)
+	{
+		if (!msg.time && p)
+			msg.time = mtime(&p->tstart, &p->errno);
+		printf("%lli: %s\n", msg.time, msg.msg);
+	}
 	if (mode & EXIT)
 		exit(1);
 	return (ret);

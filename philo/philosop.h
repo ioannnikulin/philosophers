@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/29 18:11:50 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/29 21:00:42 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,14 +135,22 @@ typedef struct s_philo
 	t_props		*props;
 }	t_philo;
 
+typedef struct s_fin_param
+{
+	char	*msg;
+	t_usec	time;
+}	t_fin_param;
+
 int			usage(int ret);
 int			init(t_props *p, int argc, char **argv);
 int			setup(t_props *p);
 t_usec		mtime(t_usec *t, int *ok);
+t_usec		mmtime(t_usec *t, int *ok);
 void		*philo(void *arg);
 void		*moni(void *a);
 int			report(t_philo *p, int action, t_usec t);
-int			finalize(t_props *p, int mode, char *msg, int ret);
+int			finalize(t_props *p, int mode, t_fin_param msg, int ret);
+t_fin_param	msg(char *msg, t_usec time);
 int			assign(int *to, int val, int ret);
 int			mfree(int choice, void **w, int sz, int ret);
 int			mbzero(void *f, int bytes, int ret);
