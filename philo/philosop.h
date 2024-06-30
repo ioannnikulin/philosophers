@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/30 12:41:52 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/30 15:31:45 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@
 
 # define TX_ERR_MALLOC "Error allocating memory"
 # define TX_ERR_TIMER "Timer error"
+# define TX_ERR_SLEEP "Insomnia"
 # define TX_ERR_NUM_FORMAT "Unexpected number format"
 # define TX_ERR_MUTEX_INIT "Mutex initialization failure"
 # define TX_ERR_MUTEX_PRINT_LOCK "Print mutex lock failure"
@@ -49,6 +50,8 @@
 # define TX_ERR_MUTEX_IND_LAST_MEAL_LOCK "Philosopher last meal mutex lock failure"
 # define TX_ERR_MUTEX_IND_LAST_MEAL_UNLOCK "Philosopher last meal mutex unlock \
 	failure"
+# define TX_ERR_MUTEX_TIMER_LOCK "Failed to lock timer mutex"
+# define TX_ERR_MUTEX_TIMER_UNLOCK "Failed to unlock timer mutex"
 # define TX_ERR_MUTEX_KILL "Mutex destruction failure"
 # define TX_ERR_THREAD_START "Failed to start a thread"
 # define TX_ERR_THREAD_JOIN "Failed to join a thread"
@@ -70,6 +73,7 @@
 # define DESTROY_M_STATE 128
 # define DESTROY_M_IN_PHILO (128 + 64)
 # define DESTROY_M_PRINT 256
+# define DESTROY_M_TIME 2048
 # define REPORT_FATAL 512 /* don't combine with anything except for UNLOCK_PRINT */
 # define EXIT 1024 /* don't combine with anything except for UNLOCK_PRINT */
 # define STAGE_1 (1 + 2 + 4 + 1024)
@@ -103,6 +107,7 @@ typedef struct s_props
 	pthread_t		*threads;
 	t_mutex			*forks;
 	t_mutex			print_poll;
+	t_mutex			mtime;
 	t_s_int			enough;
 	t_usec			tstart;
 	unsigned int	full_philos; /* controlled by print_poll too */
@@ -146,8 +151,8 @@ typedef struct s_fin_param
 int			usage(int ret);
 int			init(t_props *p, int argc, char **argv);
 int			setup(t_props *p);
-t_usec		mtime(t_usec *t, int *ok);
-t_usec		mmtime(t_usec *t, int *ok);
+t_usec		mtime(t_usec *t, int *ok, t_props *p);
+void		msleep(t_usec t, t_props *p);
 void		*philo(void *arg);
 void		*moni(void *a);
 int			report(t_philo *p, int action, t_usec t);

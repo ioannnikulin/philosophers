@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:07:40 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/30 13:07:00 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/30 15:07:45 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	main(int argc, char **argv)
 	mbzero(&props, sizeof(t_props), 0);
 	if (init(&props, argc, argv))
 		return (1);
-	props.tstart = mtime(0, &props.errno);
+	props.tstart = mtime(0, &props.errno, &props);
 	if (props.errno)
 		return (finalize(&props, STAGE_2, msg(TX_ERR_TIMER, 0), 1));
 	printf("Initial delay: %lli\n", DELAY);

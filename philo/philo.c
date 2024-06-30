@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/30 13:06:04 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/30 15:32:46 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int	frk(t_philo *p, pthread_mutex_t *f, int action)
 	{
 		if (m_lock(f))
 			return (finalize(0, 0, msg(TX_ERR_FORK_TAKE, 0), 1));
-		report(p, TAKES, mtime(&p->props->tstart, &errno));
+		report(p, TAKES, mtime(&p->props->tstart, &errno, p->props));
 		if (errno)
 			return (1);
 		return (0);
@@ -37,22 +37,22 @@ static t_usec	wait_n_eat(t_philo *p, int *errno)
 	t_usec	nwait;
 	t_usec	started_eating;
 
-	if (*errno || report(p, THINKS, mtime(&p->props->tstart, errno)) || *errno)
+	if (*errno || report(p, THINKS, mtime(&p->props->tstart, errno, p->props)) || *errno)
 		return (assign(errno, 1, 0));
-	b44k = mtime(&p->props->tstart, errno);
+	b44k = mtime(&p->props->tstart, errno, p->props);
 	if (*errno)
 		return (0);
-	usleep(p->wait);
+	msleep(p->wait, p->props);
 	if (*errno || frk(p, p->l, 0) || frk(p, p->r, 0))
 		return (assign(errno, 1, 0));
 	tsint_set(&p->state, EATS, errno);
 	if (*errno)
 		return (0);
-	started_eating = mtime(&p->props->tstart, errno);
+	started_eating = mtime(&p->props->tstart, errno, p->props);
 	nwait = started_eating - b44k;
 	if (*errno || report(p, EATS, started_eating))
 		return (assign(errno, 1, 0));
-	usleep(p->teat);
+	msleep(p->teat, p->props);
 	p->times_eaten ++;
 	tsusec_set(&p->last_meal, started_eating + p->teat, errno);
 	if (*errno || frk(p, p->l, 1) || frk(p, p->r, 1))
@@ -68,12 +68,12 @@ static int	birth(t_philo **p, void *arg, int *errno)
 	assign(errno, 0, 0);
 	if (*errno)
 		return (1);
-	first_meal = mtime(&(*p)->props->tstart, errno);
+	first_meal = mtime(&(*p)->props->tstart, errno, (*p)->props);
 	if (*errno)
 		return (1);
 	if (first_meal < DELAY)
-		usleep(DELAY - first_meal);
-	first_meal = mtime(&(*p)->props->tstart, errno);
+		msleep(DELAY - first_meal, (*p)->props);
+	first_meal = mtime(&(*p)->props->tstart, errno, (*p)->props);
 	if (*errno)
 		return (1);
 	tsusec_set(&((*p)->last_meal), first_meal, errno);
@@ -117,9 +117,9 @@ void	*philo(void *arg)
 		tsint_set(&p->state, SLEEPS, &errno);
 		if (errno)
 			return (0);
-		if (report(p, SLEEPS, mtime(&p->props->tstart, &errno)) || errno)
+		if (report(p, SLEEPS, mtime(&p->props->tstart, &errno, p->props)) || errno)
 			return (ret(p->i, arg));
-		usleep(p->tsleep);
+		msleep(p->tsleep, p->props);
 		restrat(p, nwait);
 		state = tsint_get(&p->state, &errno);
 		if (errno || state == ENOUGH || state == DIES)

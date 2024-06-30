@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/29 18:35:01 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/30 15:05:43 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,8 @@ int	init(t_props *p, int argc, char **argv)
 		return (finalize(p, STAGE_1, msg(TX_ERR_MALLOC, 0), 1));
 	if (m_init(&p->print_poll))
 		return (finalize(p, STAGE_1, msg(TX_ERR_MUTEX_INIT, 0), 1));
+	if (m_init(&p->mtime))
+		return (finalize(p, STAGE_1 | DESTROY_M_TIME, msg(TX_ERR_MUTEX_INIT, 0), 1));
 	i = 0;
 	while (i < p->sz)
 		if (clone_philo(p, 0, i ++))

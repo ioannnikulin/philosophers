@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/30 13:02:50 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/30 15:12:39 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ static int	mutexes(t_props *p, int mode)
 		if (m_unlock(&p->print_poll))
 			finalize(0, 0, msg(TX_ERR_MUTEX_PRINT_UNLOCK, 0), 0);
 	ret = ret | mutex(mode & DESTROY_M_PRINT, &p->print_poll);
+	ret = ret | mutex(mode & DESTROY_M_TIME, &p->mtime);
 	// if (ret)
 		// return (finalize(0, 0, msg(TX_ERR_MUTEX_KILL, 0), 1));
 	return (0);
@@ -80,7 +81,7 @@ int	finalize(t_props *p, int mode, t_fin_param msg, int ret)
 	if (msg.msg)
 	{
 		if (!msg.time && p)
-			msg.time = mtime(&p->tstart, &p->errno);
+			msg.time = mtime(&p->tstart, &p->errno, p);
 		printf("%lli: %s\n", msg.time, msg.msg);
 	}
 	if (mode & EXIT)
