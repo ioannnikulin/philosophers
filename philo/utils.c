@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/29 21:00:27 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/30 14:00:37 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	mbzero(void *f, int bytes, int ret)
 {
 	char	*s;
 
-	if (!f || !bytes)
+	if (!f || bytes <= 0)
 		return (ret);
 	s = f;
 	while (-- bytes >= 0)

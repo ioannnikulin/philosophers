@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/29 21:00:42 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/06/30 12:41:52 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@
 # define THINKS 4
 # define DIES 5
 # define ENOUGH 6
+
+# define DELAY 500LL
 
 # define DEAD_REPORT_MICROS 10000
 # define MAX_MICROS 2000000000
