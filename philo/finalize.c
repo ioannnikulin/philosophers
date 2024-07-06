@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/30 15:12:39 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/07/06 19:21:49 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static int	mutexes(t_props *p, int mode)
 	return (0);
 }
 
-int	finalize(t_props *p, int mode, t_fin_param msg, int ret)
+int	finalize(t_props *p, int mode, t_fin_param msgp, int ret)
 {
 	unsigned int	i;
 
@@ -78,14 +78,17 @@ int	finalize(t_props *p, int mode, t_fin_param msg, int ret)
 		}
 		mfree(mode & FREE_FORKS, (void*)&p->forks, sizeof(t_mutex *) * p->sz, 0);
 	}
-	if (msg.msg)
+	if (msgp.msg)
 	{
-		if (!msg.time && p)
-			msg.time = mtime(&p->tstart, &p->errno, p);
-		printf("%lli: %s\n", msg.time, msg.msg);
+		if (!msgp.time && p)
+			msgp.time = mtime(&p->tstart, &p->errno, p);
+		if (m_lock(&p->print_poll))
+			return (finalize(p, REPORT_FATAL, msg(TX_ERR_MUTEX_PRINT_LOCK, 0), 1));
+		prints("\n", prints(msgp.msg, prints(": ", printlli(msgp.time, 0))));
+		if (m_unlock(&p->print_poll))
+			return (finalize(p, REPORT_FATAL, msg(TX_ERR_MUTEX_PRINT_UNLOCK, 0), 1));
 	}
 	if (mode & EXIT)
 		exit(1);
 	return (ret);
 }
-/* for perfect execution: message should be printed on print mutex */

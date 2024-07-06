@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/30 15:32:46 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/07/06 20:28:53 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ static t_usec	wait_n_eat(t_philo *p, int *errno)
 	if (*errno)
 		return (0);
 	msleep(p->wait, p->props);
+	tsint_set(&p->state, TAKES, errno);
 	if (*errno || frk(p, p->l, 0) || frk(p, p->r, 0))
 		return (assign(errno, 1, 0));
 	tsint_set(&p->state, EATS, errno);
@@ -66,8 +67,6 @@ static int	birth(t_philo **p, void *arg, int *errno)
 
 	*p = (t_philo *)arg;
 	assign(errno, 0, 0);
-	if (*errno)
-		return (1);
 	first_meal = mtime(&(*p)->props->tstart, errno, (*p)->props);
 	if (*errno)
 		return (1);
@@ -94,9 +93,16 @@ static void	restrat(t_philo *p, t_usec nwait)
 	}
 }
 
-static void *ret(int i, void *arg)
+static void *ret(int i, void *arg, t_props *p, int code)
 {
-	printf("exiting %i\n", i);
+	if (m_lock(&p->print_poll))
+	{
+		finalize(p, REPORT_FATAL, msg(TX_ERR_MUTEX_PRINT_LOCK, 0), 1);
+		return (arg);
+	}
+	prints("\n", printlli(code, prints(" ", printlli(i, prints("exiting ", 0)))));
+	if (m_unlock(&p->print_poll))
+		finalize(p, REPORT_FATAL, msg(TX_ERR_MUTEX_PRINT_UNLOCK, 0), 1);
 	return (arg);
 }
 
@@ -108,21 +114,21 @@ void	*philo(void *arg)
 	int		state;
 
 	if (birth(&p, arg, &errno))
-		return (ret(p->i, arg));
+		return (ret(p->i, arg, p->props, 0));
 	while (1)
 	{
 		nwait = wait_n_eat(p, &errno);
 		if (errno)
-			return (ret(p->i, arg));
+			return (ret(p->i, arg, p->props, 1));
 		tsint_set(&p->state, SLEEPS, &errno);
 		if (errno)
 			return (0);
 		if (report(p, SLEEPS, mtime(&p->props->tstart, &errno, p->props)) || errno)
-			return (ret(p->i, arg));
+			return (ret(p->i, arg, p->props, 2));
 		msleep(p->tsleep, p->props);
 		restrat(p, nwait);
 		state = tsint_get(&p->state, &errno);
 		if (errno || state == ENOUGH || state == DIES)
-			return (ret(p->i, arg));
+			return (ret(p->i, arg, p->props, 10 + state));
 	}
 }

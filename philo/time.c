@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/30 15:33:58 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/07/06 17:24:40 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	msleep(t_usec t, t_props *p)
 {
 	t_usec	start;
 	int		errno;
+	t_usec	now;
 
 	start = mtime(&p->tstart, &errno, p);
 	if (errno)
@@ -50,8 +51,12 @@ void	msleep(t_usec t, t_props *p)
 		finalize(p, REPORT_FATAL, msg(TX_ERR_SLEEP, 0), 0);
 		return ;
 	}
-	while (mtime(&start, &errno, p) < t && !errno)
-		;
+	while (!errno)
+	{
+		now = mtime(&p->tstart, &errno, p);
+		if (now >= t + start)
+			break ;
+	}
 	if (errno)
 		finalize(p, REPORT_FATAL, msg(TX_ERR_SLEEP, 0), 0);
 }

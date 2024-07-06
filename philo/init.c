@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2024/06/30 15:05:43 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/07/06 17:43:32 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,13 @@ int	init(t_props *p, int argc, char **argv)
 
 	if (parse_args(p, argc, argv))
 		return (1);
+	p->desc[NEWBORN] = TX_NEWBORN;
+	p->desc[TAKES] = TX_TAKES;
+	p->desc[EATS] = TX_EATS;
+	p->desc[SLEEPS] = TX_SLEEPS;
+	p->desc[THINKS] = TX_THINKS;
+	p->desc[DIES] = TX_DIES;
+	p->desc[ENOUGH] = TX_ENOUGH;
 	p->threads = mcalloc(sizeof(pthread_t) * p->sz);
 	p->forks = mcalloc(sizeof(t_mutex) * p->sz);
 	if (!p->threads || !p->forks)
