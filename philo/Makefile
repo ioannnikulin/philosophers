@@ -7,7 +7,7 @@ INCLUDES = -I.
 
 all: $(NAME)
 
-SRCS = init.c philo.c report.c setup.c utils.c main.c finalize.c wrappers.c t_s_int.c t_s_usec.c monitor.c time.c print.c
+SRCS = init.c philo.c report.c setup.c utils.c main.c finalize.c wrappers.c t_s_int.c t_s_usec.c monitor.c time.c print.c state_description.c
 OBJS = $(SRCS:.c=.o)
 
 $(NAME): $(OBJS)
@@ -23,5 +23,30 @@ fclean: clean
 	$(PREFIX)rm -f $(NAME)
 
 re: fclean all
+
+test1:
+	#shouldn't eat a single time and dies
+	./$(NAME) 1 800 200 200
+	#didn't eat a single time and died
+
+test2:
+	#everybody lives
+	./$(NAME) 5 800 200 200
+	#everybody lived until you killed them
+
+test3:
+	#everybody lives until they've eaten 7 times
+	./$(NAME) 5 800 200 200 7
+	#everybody got full
+
+test4:
+	#everybody lives
+	./$(NAME) 4 410 200 200
+	#everybody lived until you killed them
+
+test5:
+	#one dies
+	./$(NAME) 3 310 200 100
+	#one died, why did you kill the others?
 
 PHONY: all clean fclean re

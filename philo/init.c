@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2024/07/06 17:43:32 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/18 14:00:13 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ static int	clone_philo(t_props *p, int f, int t)
 	p->philos[t].full_tgt = p->philos[f].full_tgt;
 	p->philos[t].delta = 20;
 	p->philos[t].props = p;
+	p->philos[t].state.v = NEWBORN;
 	return (0);
 }
 
@@ -100,13 +101,6 @@ int	init(t_props *p, int argc, char **argv)
 
 	if (parse_args(p, argc, argv))
 		return (1);
-	p->desc[NEWBORN] = TX_NEWBORN;
-	p->desc[TAKES] = TX_TAKES;
-	p->desc[EATS] = TX_EATS;
-	p->desc[SLEEPS] = TX_SLEEPS;
-	p->desc[THINKS] = TX_THINKS;
-	p->desc[DIES] = TX_DIES;
-	p->desc[ENOUGH] = TX_ENOUGH;
 	p->threads = mcalloc(sizeof(pthread_t) * p->sz);
 	p->forks = mcalloc(sizeof(t_mutex) * p->sz);
 	if (!p->threads || !p->forks)
@@ -116,6 +110,7 @@ int	init(t_props *p, int argc, char **argv)
 	if (m_init(&p->mtime))
 		return (finalize(p, STAGE_1 | DESTROY_M_TIME, msg(TX_ERR_MUTEX_INIT, 0), 1));
 	i = 0;
+	p->enough.v = NEWBORN;
 	while (i < p->sz)
 		if (clone_philo(p, 0, i ++))
 			return (1);

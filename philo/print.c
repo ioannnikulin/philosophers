@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 16:21:26 by inikulin          #+#    #+#             */
-/*   Updated: 2024/07/06 19:49:51 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/18 13:13:17 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,16 +65,17 @@ int	printlli(long long int i, int ret)
 
 void	print(long long int printed, long long int happened, t_philo *p, int state)
 {
-	char	s[20];
+	char	s[26];
 	int		i;
 
-	i = 0;
-	while (i < 20)
-		s[i ++] = ' ';
-	prints(&s[printlli(printed, 10)], 0);
-	prints(&s[printlli(happened, 10)], 0);
-	prints(&s[printlli(p->i, 15)], 0);
-	prints(&s[prints(p->props->desc[state], 0)], 0);
-	prints(&s[printlli(p->times_eaten, 15)], 0);
+	i = -1;
+	while (++i < 25)
+		s[i] = ' ';
+	s[25] = 0;
+	prints(&s[printlli(printed, 15)], 0);
+	prints(&s[printlli(happened, 15)], 0);
+	prints(&s[printlli(p->i, 20)], 0);
+	prints(&s[prints(state_description(state), 0)], 0);
+	printlli(p->times_eaten, 0);
 	prints("\n", 0);
 }

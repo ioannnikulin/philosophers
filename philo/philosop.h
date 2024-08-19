@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/07/06 20:36:15 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/19 21:59:07 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,19 @@
 
 # define MONITOR
 
-# define NEWBORN 0
-# define TAKES 1
-# define EATS 2
-# define SLEEPS 3
-# define THINKS 4
-# define DIES 5
-# define ENOUGH 6
+# define NEWBORN 1
+# define TAKES 2
+# define EATS 4
+# define SLEEPS 8
+# define THINKS 16
+# define DIES 32
+# define ENOUGH 64
+# define TOOK_L 128
+# define TOOK_R 256
+# define TOOK_BOTH 512
+# define ANY_ALIVE 927
+# define ANY_UNALIVE 96
+# define ANY 1023
 
 # define DELAY 500LL
 
@@ -82,7 +88,6 @@
 # define DESTROY_M_PRINT 256
 # define DESTROY_M_TIME 2048
 # define REPORT_FATAL 512 /* don't combine with anything except for UNLOCK_PRINT */
-# define EXIT 1024 /* don't combine with anything except for UNLOCK_PRINT */
 # define STAGE_1 (1 + 2 + 4 + 1024)
 # define STAGE_2 (1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256 + 1024)
 
@@ -98,16 +103,6 @@ typedef struct s_s_int
 	char	*e_lock;
 	char	*e_unlock;
 }	t_s_int;
-
-# define TSI_SET_MODE_ANY 0
-# define TSI_SET_MODE_NOTFROM 1
-
-typedef struct s_s_i_set_param
-{
-	int	newval;
-	int	mode;
-	int	other;
-}	t_s_i_set_param;
 
 typedef struct s_s_usec
 {
@@ -130,7 +125,6 @@ typedef struct s_props
 	unsigned int	full_philos; /* controlled by print_poll too */
 	int				errno;
 	pthread_t		monitor;
-	char			*desc[7];
 }	t_props;
 
 typedef struct s_philo
@@ -187,7 +181,7 @@ int			m_lock(t_mutex *m);
 int			m_unlock(t_mutex *m);
 
 int			tsint_get(t_s_int *i, int *errno);
-t_s_int		*tsint_set(t_s_int *i, t_s_i_set_param p, int *errno);
+t_s_int		*tsint_set(t_s_int *i, int oldval, int newval, int *errno);
 t_s_int		*tsint_add(t_s_int *i, int val, int *errno);
 t_usec		tsusec_get(t_s_usec *i, int *errno);
 t_s_usec	*tsusec_set(t_s_usec *i, t_usec val, int *errno);
@@ -196,4 +190,5 @@ t_s_usec	*tsusec_add(t_s_usec *i, t_usec val, int *errno);
 int			prints(char *s, int ret);
 int			printlli(long long int i, int ret);
 void		print(long long int printed, long long int happened, t_philo* p, int state);
+char		*state_description(int state);
 #endif

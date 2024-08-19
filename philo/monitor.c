@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/07/06 20:12:10 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/19 22:08:14 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static int	end(t_props *p)
 	i = 0;
 	while (i < p->sz)
 	{
-		tsint_set(&p->philos[i].state, ENOUGH, &p->errno);
+		tsint_set(&p->philos[i].state, ANY, ENOUGH, &p->errno);
 		i ++;
 	}
 	return (0);
@@ -50,8 +50,9 @@ static int	check(t_props *p)
 			return (2);
 		if (hungry_for > p->philos[i].tdie)
 		{
-			tsint_set(&p->philos[i].state, DIES, &p->errno);
-			report(&p->philos[i], 1, mtime(&p->tstart, &p->errno, p));
+			tsint_set(&p->philos[i].state, ANY, DIES, &p->errno);
+			report(&p->philos[i], DIES, mtime(&p->tstart, &p->errno, p));
+			dead_dont_need_forks(&p->philos[i]);
 			return (DIES);
 		}
 		i ++;
