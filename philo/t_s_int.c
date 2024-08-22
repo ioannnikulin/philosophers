@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 17:04:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 14:21:44 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/22 20:58:49 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ t_s_int	*tsint_set(t_s_int *i, int oldval, int newval, int *errno)
 	}
 	if (!(oldval & i->v))
 	{
+		printlli(i->v, 0);
+		prints("\n", 0);
 		assign(errno, 3, 0);
 		return (i);
 	}

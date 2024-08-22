@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 17:18:09 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/22 20:35:38 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static int	end(t_props *p)
 	i = 0;
 	while (i < p->sz)
 	{
-		tsint_set(&p->philos[i].state, ANY, ENOUGH, &p->errno);
+		tsint_or(&p->philos[i].state, ENOUGH, &p->errno);
 		i ++;
 	}
 	return (0);
@@ -42,10 +42,12 @@ static int	check(t_props *p)
 	i = 0;
 	while (i < p->sz)
 	{
+		//report(&p->philos[i], BEFORE_INSPECTION, mtime(&p->tstart, &p->errno, p));
 		if (m_lock(&p->philos[i].state.m))
 			return (finalize(0, 0, msg(p->philos[i].state.e_lock, 0), 1));
+		//report(&p->philos[i], INSIDE_INSPECTION, mtime(&p->tstart, &p->errno, p));
 		state = p->philos[i].state.v;
-		if (state == DIES)
+		if (state & DIES)
 			return (ret(p, i, DIES));
 		if (state & (NEWBORN | EATS))
 			return (ret(p, i, 0));
@@ -75,7 +77,7 @@ void	*moni(void *a)
 	p = (t_props *)a;
 	while (1)
 	{
-		if (tsint_get(&p->enough, &p->errno) == ENOUGH || p->errno)
+		if ((tsint_get(&p->enough, &p->errno) & ENOUGH) || p->errno)
 			break ;
 		if (check(p))
 			break ;

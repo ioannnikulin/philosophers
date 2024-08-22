@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 12:47:33 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 16:52:49 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/22 20:32:37 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,9 @@ char	*state_description(int state)
 		return (TX_ENOUGH);
 	if (state == LOOKS)
 		return (TX_LOOKS);
+	if (state == BEFORE_INSPECTION)
+		return (TX_BEFORE_INSPECTION);
+	if (state == INSIDE_INSPECTION)
+		return (TX_INSIDE_INSPECTION);
 	return ("ERROR");
 }

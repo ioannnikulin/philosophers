@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/19 22:09:26 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/22 20:59:51 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,20 +70,24 @@ void	*philo(void *arg)
 	int		state;
 
 	if (birth(&p, arg, &errno))
-		return (ret(p->i, arg, p->props, 0));
+		return (ret(p->i, arg, p->props, 7));
 	while (1)
 	{
 		if (errno || think(p, &errno) || errno)
-			return (ret(p->i, arg, p->props, 1));
-		nwait = eat(p, &errno, prepare_to_eat(p, &errno));
+			return (ret(p->i, arg, p->props, 8));
+		nwait = prepare_to_eat(p, &errno);
 		if (errno)
-			return (ret(p->i, arg, p->props, 2));
+			return (ret(p->i, arg, p->props, errno + 100));
+		nwait = eat(p, &errno, nwait);
+		if (errno)
+			return (ret(p->i, arg, p->props, errno));
 		tsint_set(&p->state, EATS, SLEEPS, &errno);
 		if (errno)
-			return (ret(p->i, arg, p->props, 3));
+			return (ret(p->i, arg, p->props, 9));
 		if (report(p, SLEEPS, mtime(&p->props->tstart, &errno, p->props)) || errno)
-			return (ret(p->i, arg, p->props, 4));
+			return (ret(p->i, arg, p->props, 10));
 		msleep(p->tsleep, p->props);
+		tsint_set(&p->state, SLEEPS, THINKS, &errno);
 		restrat(p, nwait);
 		state = tsint_get(&p->state, &errno);
 		if (errno || state == ENOUGH || state == DIES)

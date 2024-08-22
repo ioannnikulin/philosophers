@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2024/07/06 18:05:34 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/22 20:07:42 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@ int	report(t_philo *p, int state, t_usec t)
 		return (act_die(p, t));
 	if (t > MAX_MICROS || t < 0)
 		return (finalize(p->props, REPORT_FATAL | UNLOCK_PRINT, msg(TX_MAX_TIME, t), 1));
-	if (tsint_get(&p->props->enough, &p->props->errno) == ENOUGH || p->props->errno)
+	if ((tsint_get(&p->props->enough, &p->props->errno) & ENOUGH) || p->props->errno)
 		return (finalize(p->props, UNLOCK_PRINT, msg(0, 0), 1));
-	if (state == ENOUGH || p->props->errno)
+	if ((state & ENOUGH) || p->props->errno)
 		return (finalize(p->props, UNLOCK_PRINT, msg(0, 0), 1));
 	print(mtime(&p->props->tstart, 0, p->props), t, p, state);
-	if (state == EATS && p->times_eaten + 1 == p->full_tgt)
+	if ((state & EATS) && p->times_eaten + 1 == p->full_tgt)
 	{
 		p->props->full_philos ++;
 		if (p->props->full_philos == p->props->sz)

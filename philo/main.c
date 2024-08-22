@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:07:40 by inikulin          #+#    #+#             */
-/*   Updated: 2024/07/06 20:12:49 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/22 20:00:34 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	main(int argc, char **argv)
 	if (props.errno)
 		return (finalize(&props, STAGE_2, msg(TX_ERR_TIMER, 0), 1));
 	prints("\n", printlli(DELAY, prints("Initial delay: ", 0)));
-	// setup(&props);
+	setup(&props);
 	i = 0;
 	while (i < props.sz)
 	{

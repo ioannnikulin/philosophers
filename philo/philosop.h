@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 16:52:33 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/22 20:33:22 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,13 @@
 # define ANY 1023
 
 # define LOOKS 512
+# define BEFORE_INSPECTION 1024
+# define INSIDE_INSPECTION 2048
 
 # define DELAY 500LL
 
 # define DEAD_REPORT_MICROS 10000LL
-# define MAX_MICROS 2000LL
+# define MAX_MICROS 2000000LL
 
 # define FREE_PHILOS 1 /* make sure to DESTROY_M_IN_PHILO */
 # define FREE_THREADS 2

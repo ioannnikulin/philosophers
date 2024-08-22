@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 16:51:48 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/22 20:32:04 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,6 @@
 # define TX_ENOUGH "leaves the table full"
 
 # define TX_LOOKS "starts looking for forks"
+# define TX_BEFORE_INSPECTION "will be inspected now"
+# define TX_INSIDE_INSPECTION "is being inspected"
 #endif

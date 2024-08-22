@@ -49,4 +49,9 @@ test5:
 	./$(NAME) 3 310 200 100
 	#one died, why did you kill the others?
 
+test6:
+	#both live
+	./$(NAME) 2 800 200 100
+	#both lived until you killed them
+
 PHONY: all clean fclean re
