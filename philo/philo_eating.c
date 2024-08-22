@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 15:56:19 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/22 17:06:42 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,9 @@ static int	put_fork(t_philo *p, int which, int set_state)
 		return (0);
 	if (m_unlock(this))
 	{
+		finalize(0, 0, msg(TX_ERR_FORK_PUT, 0), 1);
 		put_fork(p, TOOK_BOTH ^ which, set_state);
-		return (finalize(0, 0, msg(TX_ERR_FORK_PUT, 0), 1));
+		return (1);
 	}
 	if (set_state)
 	{
@@ -56,10 +57,16 @@ static int	take_fork(t_philo *p, int which, int set_state)
 
 	this = mfork(p, which);
 	other = mfork(p, TOOK_BOTH ^ which);
+	report(p, LOOKS, mtime(&p->props->tstart, &errno, p->props));
+	if (which == TOOK_R)
+		report(p, LOOKS, mtime(&p->props->tstart, &errno, p->props));
+	if (errno)
+		return (5);
 	if (m_lock(this))
 	{
+		finalize(0, 0, msg(TX_ERR_FORK_TAKE, 0), 1);
 		put_fork(p, TOOK_BOTH ^ which, set_state);
-		return (finalize(0, 0, msg(TX_ERR_FORK_TAKE, 0), 1));
+		return (1);
 	}
 	if ((tsint_get(&p->state, &errno) & ANY_UNALIVE) > 0 || errno)
 	{
@@ -130,8 +137,6 @@ t_usec	eat(t_philo *p, int *errno, t_usec before)
 
 int	die_and_drop_forks(t_philo *p)
 {
-	if (m_lock(&p->state.m))
-		finalize(0, 0, msg(p->state.e_lock, 0), 1);
 	if (p->state.v & TOOK_L)
 		put_fork(p, TOOK_L, 0);
 	if (p->state.v & TOOK_R)

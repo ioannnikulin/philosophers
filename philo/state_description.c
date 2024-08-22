@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 12:47:33 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/18 12:53:36 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/22 16:52:49 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,5 +28,7 @@ char	*state_description(int state)
 		return (TX_DIES);
 	if (state == ENOUGH)
 		return (TX_ENOUGH);
+	if (state == LOOKS)
+		return (TX_LOOKS);
 	return ("ERROR");
 }

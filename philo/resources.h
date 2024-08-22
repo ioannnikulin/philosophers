@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 15:33:16 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/22 16:51:48 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,6 @@
 # define TX_THINKS "is thinking"
 # define TX_DIES "died"
 # define TX_ENOUGH "leaves the table full"
+
+# define TX_LOOKS "starts looking for forks"
 #endif

@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 15:39:34 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/22 16:52:33 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@
 # define ANY_ALIVE 31
 # define ANY_UNALIVE 96
 # define ANY 1023
+
+# define LOOKS 512
 
 # define DELAY 500LL
 
