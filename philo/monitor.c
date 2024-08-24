@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 20:35:38 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/24 14:37:35 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,11 @@ static int	check(t_props *p)
 		state = p->philos[i].state.v;
 		if (state & DIES)
 			return (ret(p, i, DIES));
-		if (state & (NEWBORN | EATS))
-			return (ret(p, i, 0));
+		if (state & NEWBORN)
+		{
+			i ++;
+			continue;
+		}
 		last_meal = tsusec_get(&p->philos[i].last_meal, &p->errno);
 		if (p->errno)
 			return (ret(p, i, 2));
@@ -73,11 +76,18 @@ static int	check(t_props *p)
 void	*moni(void *a)
 {
 	t_props	*p;
+	t_usec	start;
 
 	p = (t_props *)a;
+	assign(&p->errno, 0, 0);
+	start = mtime(&p->tstart, &p->errno, p);
+	if (p->errno > 0)
+		return (a);
+	if (start < DELAY)
+		msleep(DELAY - start, p);
 	while (1)
 	{
-		if ((tsint_get(&p->enough, &p->errno) & ENOUGH) || p->errno)
+		if ((tsint_get(&p->enough, &p->errno) & ENOUGH) || p->errno > 0)
 			break ;
 		if (check(p))
 			break ;

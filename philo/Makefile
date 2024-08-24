@@ -24,15 +24,25 @@ fclean: clean
 
 re: fclean all
 
+test1_cmd = ./$(NAME) 1 800 200 200
+
 test1:
 	#shouldn't eat a single time and dies
-	./$(NAME) 1 800 200 200
+	eval $(test1_cmd)
 	#didn't eat a single time and died
+
+debug1:
+	gdbtui --args $(test1_cmd)
+
+test2_cmd = ./$(NAME) 5 800 200 200
 
 test2:
 	#everybody lives
-	./$(NAME) 5 800 200 200
+	eval $(test2_cmd)
 	#everybody lived until you killed them
+
+debug2:
+	gdbtui --args $(test2_cmd)
 
 test3:
 	#everybody lives until they've eaten 7 times

@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 20:59:51 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/24 14:31:12 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,15 @@ static int	birth(t_philo **p, void *arg, int *errno)
 
 static void	restrat(t_philo *p, t_usec nwait)
 {
-	if (nwait - p->wait > p->delta)
+	(void)p;
+	(void)nwait;
+	/*if (nwait - p->wait > p->delta)
 	{
 		if (nwait > p->tdie * 0.8)
 			p->wait = 0;
 		else
 			p->wait = 0;
-	}
+	}*/
 }
 
 static void *ret(int i, void *arg, t_props *p, int code)

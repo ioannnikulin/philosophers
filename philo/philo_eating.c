@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 20:51:43 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/24 13:56:20 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static int	take_fork(t_philo *p, int which, int set_state, int *errno)
 	t_mutex	*this;
 	t_mutex	*other;
 
-	if (errno)
+	if (*errno)
 		return (1);
 	assign(errno, 0, 0);
 	this = choose_fork(p, which);
