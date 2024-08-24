@@ -59,9 +59,14 @@ test5:
 	./$(NAME) 3 310 200 100
 	#one died, why did you kill the others?
 
+test6_cmd = ./$(NAME) 2 800 200 100
+
+debug6:
+	gdbtui --args $(test6_cmd)
+
 test6:
 	#both live
-	./$(NAME) 2 800 200 100
+	eval $(test6_cmd)
 	#both lived until you killed them
 
 PHONY: all clean fclean re

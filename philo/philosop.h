@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 20:33:22 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/24 18:55:35 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@
 # define THINKS 16
 # define DIES 32
 # define ENOUGH 64
-# define TOOK_L 128
+# define TOOK_L 4096
 # define TOOK_R 256
-# define TOOK_BOTH 384
+# define TOOK_BOTH 4352
 # define ANY_ALIVE 31
 # define ANY_UNALIVE 96
 # define ANY 1023
@@ -46,7 +46,7 @@
 # define DELAY 500LL
 
 # define DEAD_REPORT_MICROS 10000LL
-# define MAX_MICROS 2000000LL
+# define MAX_MICROS 2000LL
 
 # define FREE_PHILOS 1 /* make sure to DESTROY_M_IN_PHILO */
 # define FREE_THREADS 2
@@ -92,7 +92,8 @@ typedef struct s_philo
 	t_mutex		*r;
 	int			times_eaten;
 	t_s_int		state;
-	t_usec		wait;
+	t_usec		wait_period;
+	t_usec		wait_before;
 	t_usec		tdie;
 	t_usec		teat;
 	t_usec		tsleep;
@@ -130,5 +131,5 @@ void		print(long long int printed, long long int happened, t_philo* p, int state
 
 t_usec		prepare_to_eat(t_philo *p, int *errno);
 t_usec		eat(t_philo *p, int *errno, t_usec before);
-int			die_and_drop_forks(t_philo *p);
+int			die_and_drop_forks(t_philo *p, int block_first);
 #endif

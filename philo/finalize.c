@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 19:58:48 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/24 15:41:58 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int	finalize(t_props *p, int mode, t_fin_param msgp, int ret)
 	if (p)
 	{
 		if ((mode & REPORT_FATAL))
-			tsint_or(&p->enough, ENOUGH, &p->errno);
+			tsint_or_release(&p->enough, ENOUGH, &p->errno);
 		mutexes(p, mode);
 		mfree(mode & FREE_PHILOS, (void*)&p->philos, sizeof(t_philo *) * p->sz, 0);
 		mfree(mode & FREE_THREADS, (void*)&p->threads, sizeof(pthread_t *) * p->sz, 0);
