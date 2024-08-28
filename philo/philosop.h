@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/28 15:54:55 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/28 20:57:37 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,15 @@
 # define ANY_UNALIVE 96
 # define ANY 1023
 
+/* # define DBG_LOOKS */
+# define PRINT_FULL 1
+# define PRINT_SUBMISSION 2
+# define PRINT_MODE PRINT_FULL
 # define LOOKS 512
 # define BEFORE_INSPECTION 1024
 # define INSIDE_INSPECTION 2048
+
+#define TIMER_MUTEX
 
 # define DELAY 500LL
 
@@ -126,7 +132,7 @@ t_fin_param	msg(char *msg, t_usec time);
 char		*state_description(int state);
 
 t_usec		mtime(t_usec *t, int *ok, t_props *p);
-void		msleep(t_usec t, t_props *p);
+void		msleep(t_usec t, int *errno, t_props *p);
 void		print(long long int printed, long long int happened, t_philo* p, int state);
 
 t_usec		prepare_to_eat(t_philo *p, int *errno);

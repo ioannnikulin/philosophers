@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/28 15:24:55 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/28 19:55:51 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,18 @@ static int	birth(t_philo **p, void *arg, int *errno)
 	if (*errno)
 		return (1);
 	if (first_meal < DELAY)
-		msleep(DELAY - first_meal, (*p)->props);
+		msleep(DELAY - first_meal, errno, (*p)->props);
+	if (*errno)
+		return (2);
 	first_meal = mtime(&(*p)->props->tstart, errno, (*p)->props);
 	if (*errno)
-		return (1);
+		return (3);
 	tsusec_set(&((*p)->last_meal), first_meal, errno);
 	if (*errno)
-		return (1);
+		return (4);
 	tsull_set_release(&((*p)->state), NEWBORN, THINKS, errno);
 	if (*errno)
-		return (1);
+		return (5);
 	return (0);
 }
 
@@ -47,10 +49,11 @@ static void	restrat(t_philo *p, t_usec nwait)
 			p->wait = 0;
 	}*/
 }
-
 static void *ret(t_philo *p, int code)
 {
-	die_and_drop_forks(p, code != ENOUGH);
+	die_and_drop_forks(p, 0);
+	(void)code;
+	#if PRINT_MODE == PRINT_FULL
 	if (m_lock(&p->props->print_poll))
 	{
 		finalize(p->props, REPORT_FATAL, msg(TX_ERR_MUTEX_PRINT_LOCK, 0), 1);
@@ -59,6 +62,7 @@ static void *ret(t_philo *p, int code)
 	prints("\n", printlli(code, prints(" ", printlli(p->i, prints("exiting ", 0)))));
 	if (m_unlock(&p->props->print_poll))
 		finalize(p->props, REPORT_FATAL, msg(TX_ERR_MUTEX_PRINT_UNLOCK, 0), 1);
+	#endif
 	return ((void*)p);
 }
 
@@ -88,10 +92,12 @@ void	*philo(void *arg)
 			return (ret(p, errno));
 		tsull_set_release(&p->state, EATS, SLEEPS, &errno);
 		if (errno)
-			return (ret(p, 9));
+			return (ret(p, 300 + errno));
 		if (report(p, SLEEPS, mtime(&p->props->tstart, &errno, p->props)) || errno)
 			return (ret(p, 10));
-		msleep(p->tsleep, p->props);
+		msleep(p->tsleep, &errno, p->props);
+		if (errno)
+			return (ret(p, 13));
 		tsull_set_release(&p->state, SLEEPS, THINKS, &errno);
 		if (errno)
 			return (ret(p, 11));

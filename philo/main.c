@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:07:40 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 20:00:34 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/28 18:01:31 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,9 @@ int	main(int argc, char **argv)
 	props.tstart = mtime(0, &props.errno, &props);
 	if (props.errno)
 		return (finalize(&props, STAGE_2, msg(TX_ERR_TIMER, 0), 1));
+	#if PRINT_MODE == PRINT_FULL
 	prints("\n", printlli(DELAY, prints("Initial delay: ", 0)));
+	#endif
 	setup(&props);
 	i = 0;
 	while (i < props.sz)
@@ -68,5 +70,10 @@ int	main(int argc, char **argv)
 	if (pthread_join(props.monitor, 0))
 		return (finalize(&props, STAGE_2, msg(TX_ERR_THREAD_JOIN, 0), 1));
 	#endif
+	#if PRINT_MODE == PRINT_FULL
 	return (finalize(&props, STAGE_2, msg(TX_OVER, 0), 0));
+	#endif
+	#if PRINT_MODE == PRINT_SUBMISSION
+	return (finalize(&props, STAGE_2, msg(0, 0), 0));
+	#endif
 }

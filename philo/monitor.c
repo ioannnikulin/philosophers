@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/28 15:26:18 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/28 19:39:38 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,9 @@ void	*moni(void *a)
 	if (p->errno > 0)
 		return (a);
 	if (start < DELAY)
-		msleep(DELAY - start, p);
+		msleep(DELAY - start, &p->errno, p);
+	if (p->errno)
+		return (a);
 	while (1)
 	{
 		if ((tsull_get_release(&p->enough, &p->errno) & ENOUGH) || p->errno > 0)

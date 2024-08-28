@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 16:21:26 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/18 13:13:17 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/28 19:59:47 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	prints(char *s, int ret)
 	return (ret + l);
 }
 
-static int	lli(long long int i, int sign)
+static int	ull(unsigned long long int i, int sign)
 {
 	char	digs[20];
 	int		dig_idx;
@@ -38,6 +38,16 @@ static int	lli(long long int i, int sign)
 		digs[dig_idx --] = '-';
 	write(1, &digs[dig_idx + 1], 19 - dig_idx);
 	return (19 - dig_idx);
+}
+
+int	printull(unsigned long long i, int ret)
+{
+	if (!i)
+	{
+		write(1, "0", 1);
+		return (ret + 1);
+	}
+	return (ret + ull(i, 1));
 }
 
 int	printlli(long long int i, int ret)
@@ -60,9 +70,10 @@ int	printlli(long long int i, int ret)
 		sign = -1;
 		i = -i;
 	}
-	return (ret + lli(i, sign));
+	return (ret + ull(i, sign));
 }
 
+#if PRINT_MODE == PRINT_FULL
 void	print(long long int printed, long long int happened, t_philo *p, int state)
 {
 	char	s[26];
@@ -79,3 +90,16 @@ void	print(long long int printed, long long int happened, t_philo *p, int state)
 	printlli(p->times_eaten, 0);
 	prints("\n", 0);
 }
+#endif
+#if PRINT_MODE == PRINT_SUBMISSION
+void	print(long long int printed, long long int happened, t_philo *p, int state)
+{
+	(void)printed;
+	printlli(happened, 0);
+	prints(" ", 0);
+	printlli(p->i, 0);
+	prints(" ", 0);
+	prints(state_description(state), 0);
+	prints("\n", 0);
+}
+#endif
