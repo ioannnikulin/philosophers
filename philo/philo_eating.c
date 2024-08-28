@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/24 19:00:33 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:53:55 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static int	put_fork(t_philo *p, int which, int set_state)
 	}
 	if (set_state)
 	{
-		tsint_nor_release(&p->state, which, &errno);
+		tsull_nand_release(&p->state, which, &errno);
 		if (errno)
 		{
 			put_fork(p, TOOK_BOTH ^ which, set_state);
@@ -75,15 +75,15 @@ static int	take_fork(t_philo *p, int which, int set_state, int *errno)
 		msg(TX_ERR_FORK_TAKE, 0);
 		return (assign(errno, 4, 4));
 	}
-	if ((tsint_get(&p->state, errno) & ANY_UNALIVE) || *errno)
+	if ((tsull_get(&p->state, errno) & ANY_UNALIVE) || *errno)
 	{
 		put_fork(p, which, 0);
 		return (assign(errno, ENOUGH, ENOUGH));
 	}
-	tsint_release(&p->state, errno);
+	tsull_release(&p->state, errno);
 	if (set_state)
 	{
-		tsint_or_release(&p->state, which, errno);
+		tsull_or_release(&p->state, which, errno);
 		if (*errno)
 			return (assign(errno, 6, 6));
 	}
@@ -111,7 +111,7 @@ t_usec	prepare_to_eat(t_philo *p, int *errno)
 	if (*errno)
 		return (ret(p->props->tstart, errno));
 	assign(errno, 0, 0);
-	tsint_set_release(&p->state, THINKS, TAKES, errno);
+	tsull_set_release(&p->state, THINKS, TAKES, errno);
 	if (*errno)
 		return (ret(p->props->tstart, errno));
 	before = mtime(&p->props->tstart, errno, p->props);
@@ -135,7 +135,7 @@ t_usec	eat(t_philo *p, int *errno, t_usec before)
 
 	if (*errno)
 		return (0);
-	tsint_set_release(&p->state, TAKES, EATS, errno);
+	tsull_set_release(&p->state, TAKES, EATS, errno);
 	if (*errno) // errno enough
 		return (assign(errno, 4, 0));
 	started_eating = mtime(&p->props->tstart, errno, p->props);
@@ -160,6 +160,6 @@ int	die_and_drop_forks(t_philo *p, int block_first)
 	if (p->state.v & TOOK_R)
 		put_fork(p, TOOK_R, 0);
 	p->state.v = DIES;
-	tsint_release(&p->state, 0);
+	tsull_release(&p->state, 0);
 	return (0);
 }

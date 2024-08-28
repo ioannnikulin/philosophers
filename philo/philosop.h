@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/24 18:55:35 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:54:55 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@
 # define DELAY 500LL
 
 # define DEAD_REPORT_MICROS 10000LL
-# define MAX_MICROS 2000LL
+# define MAX_MICROS 2000000LL
 
 # define FREE_PHILOS 1 /* make sure to DESTROY_M_IN_PHILO */
 # define FREE_THREADS 2
@@ -73,7 +73,7 @@ typedef struct s_props
 	t_mutex			*forks;
 	t_mutex			print_poll;
 	t_mutex			mtime;
-	t_s_int			enough;
+	t_s_ull			enough;
 	t_usec			tstart;
 	unsigned int	full_philos; /* controlled by print_poll too */
 	int				errno;
@@ -91,7 +91,7 @@ typedef struct s_philo
 	t_mutex		*l;
 	t_mutex		*r;
 	int			times_eaten;
-	t_s_int		state;
+	t_s_ull		state;
 	t_usec		wait_period;
 	t_usec		wait_before;
 	t_usec		tdie;

@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/24 18:11:41 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:24:55 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static int	birth(t_philo **p, void *arg, int *errno)
 	tsusec_set(&((*p)->last_meal), first_meal, errno);
 	if (*errno)
 		return (1);
-	tsint_set_release(&((*p)->state), NEWBORN, THINKS, errno);
+	tsull_set_release(&((*p)->state), NEWBORN, THINKS, errno);
 	if (*errno)
 		return (1);
 	return (0);
@@ -72,7 +72,7 @@ void	*philo(void *arg)
 	t_philo	*p;
 	t_usec	nwait;
 	int		errno;
-	int		state;
+	t_ull	state;
 
 	if (birth(&p, arg, &errno))
 		return (ret(p, 7));
@@ -86,23 +86,23 @@ void	*philo(void *arg)
 		nwait = eat(p, &errno, nwait);
 		if (errno)
 			return (ret(p, errno));
-		tsint_set_release(&p->state, EATS, SLEEPS, &errno);
+		tsull_set_release(&p->state, EATS, SLEEPS, &errno);
 		if (errno)
 			return (ret(p, 9));
 		if (report(p, SLEEPS, mtime(&p->props->tstart, &errno, p->props)) || errno)
 			return (ret(p, 10));
 		msleep(p->tsleep, p->props);
-		tsint_set_release(&p->state, SLEEPS, THINKS, &errno);
+		tsull_set_release(&p->state, SLEEPS, THINKS, &errno);
 		if (errno)
 			return (ret(p, 11));
 		restrat(p, nwait);
-		state = tsint_get(&p->state, &errno);
+		state = tsull_get(&p->state, &errno);
 		if (errno || state & ANY_UNALIVE)
 		{
-			tsint_release(&p->state, &errno);
+			tsull_release(&p->state, &errno);
 			return (ret(p, 200 + state));
 		}
-		tsint_release(&p->state, &errno);
+		tsull_release(&p->state, &errno);
 		if (errno)
 			return (ret(p, 12));
 	}
