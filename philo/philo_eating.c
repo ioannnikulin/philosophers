@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/28 20:56:21 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/31 15:33:51 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,10 @@ static int	take_fork(t_philo *p, int which, int set_state, int *errno)
 	other = TOOK_BOTH ^ which;
 	other_m = choose_fork(p, other);
 	#ifdef DBG_LOOKS
+	m_lock(&p->props->print_poll);
+	printlli(p->i, 0);
+	prints(" ding\n", 0);
+	m_unlock(&p->props->print_poll);
 	report(p, LOOKS, mtime(&p->props->tstart, errno, p->props)); // debug
 	if (*errno)
 		return (assign(errno, 2, 2));
@@ -106,7 +110,7 @@ static t_usec	ret(t_usec val, int *errno)
 	}
 	return (val);
 }
-
+/*
 #if PRINT_MODE == PRINT_FULL
 static void	wait_time(t_philo *p, t_usec time)
 {
@@ -114,6 +118,11 @@ static void	wait_time(t_philo *p, t_usec time)
 	{
 		finalize(p->props, REPORT_FATAL, msg(TX_ERR_MUTEX_PRINT_LOCK, 0), 1);
 		return ;
+	}
+	if (time > 1000)
+	{
+		int abc = 0;
+		abc ++;
 	}
 	prints("\n", printull(time, prints(" for ", printlli(p->i, prints("waiting ", 0)))));
 	if (m_unlock(&p->props->print_poll))
@@ -134,16 +143,20 @@ static int	smart_wait(t_philo *p, t_usec before, int *errno)
 			return (2);
 		return (0);
 	}
-	towait = (p->wait_before + p->teat + p->tsleep + p->times_eaten * (p->wait_period + p->teat + p->tsleep) + p->wait_period) - before;
-	if (towait > p->tdie * 0.6)
-		towait = p->tdie * 0.6;
-#if PRINT_MODE == PRINT_FULL
-	wait_time(p, towait);
-#endif
-	msleep(towait, errno, p->props);
+	towait = (p->wait_before + p->teat + p->tsleep + p->times_eaten * (p->wait_period + p->teat + p->tsleep) + p->wait_period);
+	if (towait >= before)
+	{
+		towait -= before;
+		if (towait > p->tdie * 0.6)
+			towait = p->tdie * 0.6;
+		#if PRINT_MODE == PRINT_FULL
+		wait_time(p, towait);
+		#endif
+		msleep(towait, errno, p->props);
+	}
 	return (*errno);
 }
-
+*/
 /* even philos take left-right, odd philos take right-left */
 t_usec	prepare_to_eat(t_philo *p, int *errno)
 {
@@ -156,8 +169,8 @@ t_usec	prepare_to_eat(t_philo *p, int *errno)
 	if (*errno)
 		return (ret(p->props->tstart, errno));
 	before = mtime(&p->props->tstart, errno, p->props);
-	if (*errno || smart_wait(p, before, errno) || *errno)
-		return (ret(before, errno));
+	/*if (*errno || smart_wait(p, before, errno) || *errno)
+		return (ret(before, errno));*/
 	if (p->i % 2 == 0)
 	{
 		if (take_fork(p, TOOK_L, 1, errno) || *errno)
@@ -187,12 +200,14 @@ t_usec	eat(t_philo *p, int *errno, t_usec before)
 	nwait = started_eating - before;
 	if (*errno || report(p, EATS, started_eating))
 		return (assign(errno, 5, 0));
+	tsusec_set(&p->last_meal, started_eating + p->teat, errno);
+	if (*errno)
+		return (assign(errno, 7, 0));
 	msleep(p->teat, errno, p->props);
 	if (*errno)
 		return (0);
 	p->times_eaten ++;
-	tsusec_set(&p->last_meal, started_eating + p->teat, errno);
-	if (*errno || put_fork(p, TOOK_L, 1) || put_fork(p, TOOK_R, 1))
+	if (put_fork(p, TOOK_L, 1) || put_fork(p, TOOK_R, 1))
 		return (assign(errno, 6, 0));
 	return (nwait);
 }
@@ -202,9 +217,9 @@ int	die_and_drop_forks(t_philo *p, int block_first)
 {
 	if (block_first && m_lock(&p->state.m))
 		return (1);
-	if (p->state.v & TOOK_L)
+	if (p->state.v & (TOOK_L | EATS))
 		put_fork(p, TOOK_L, 0);
-	if (p->state.v & TOOK_R)
+	if (p->state.v & (TOOK_R | EATS))
 		put_fork(p, TOOK_R, 0);
 	p->state.v = DIES;
 	tsull_release(&p->state, 0);

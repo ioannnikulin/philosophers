@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 16:21:26 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/28 19:59:47 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/31 14:06:20 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void	print(long long int printed, long long int happened, t_philo *p, int state)
 void	print(long long int printed, long long int happened, t_philo *p, int state)
 {
 	(void)printed;
-	printlli(happened, 0);
+	printlli(happened / 1000, 0);
 	prints(" ", 0);
 	printlli(p->i, 0);
 	prints(" ", 0);

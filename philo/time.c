@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/28 20:46:26 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/31 14:18:10 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ void	msleep(t_usec t, int *errno, t_props *p)
 		now = mtime(&p->tstart, errno, p);
 		if (now >= t + start) // TODO: introduce step as 10% of min time in input?
 			break ;
-		usleep(20);
 	}
 	if (*errno)
 		finalize(p, REPORT_FATAL, msg(TX_ERR_SLEEP, 0), 0);

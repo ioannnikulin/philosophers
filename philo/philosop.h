@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/28 20:57:37 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/31 15:34:39 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,17 +42,17 @@
 /* # define DBG_LOOKS */
 # define PRINT_FULL 1
 # define PRINT_SUBMISSION 2
-# define PRINT_MODE PRINT_FULL
+# define PRINT_MODE PRINT_SUBMISSION
 # define LOOKS 512
 # define BEFORE_INSPECTION 1024
 # define INSIDE_INSPECTION 2048
 
 #define TIMER_MUTEX
 
-# define DELAY 500LL
+/* # define DELAY 500LL */
 
 # define DEAD_REPORT_MICROS 10000LL
-# define MAX_MICROS 2000000LL
+# define MAX_MICROS 2000000000000LL
 
 # define FREE_PHILOS 1 /* make sure to DESTROY_M_IN_PHILO */
 # define FREE_THREADS 2

@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/28 15:25:29 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/31 15:55:43 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,15 @@ int	report(t_philo *p, int state, t_usec t)
 	{
 		p->props->full_philos ++;
 		if (p->props->full_philos == p->props->sz)
+		{
+			#if PRINT_MODE == PRINT_FULL
 			return (finalize(p->props, REPORT_FATAL | UNLOCK_PRINT, msg(TX_FULL, t), 1));
+#endif
+#if PRINT_MODE == PRINT_SUBMISSION
+			return (finalize(p->props, REPORT_FATAL | UNLOCK_PRINT, msg(0, t), 1));
+#endif
+
+		}
 	}
 	if (m_unlock(&p->props->print_poll))
 		return (finalize(p->props, REPORT_FATAL, msg(TX_ERR_MUTEX_PRINT_UNLOCK, t), 1));

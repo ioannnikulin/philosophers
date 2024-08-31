@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/18 14:00:13 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/31 13:51:28 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,9 @@ static int	parse_args(t_props *p, int argc, char **argv)
 		p->philos[i].last_meal.v = -1;
 		i ++;
 	}
-	p->philos[0].tdie = atoui(argv[2], &p->errno);
-	p->philos[0].teat = atoui(argv[3], &p->errno);
-	p->philos[0].tsleep = atoui(argv[4], &p->errno);
+	p->philos[0].tdie = atoui(argv[2], &p->errno) * 1000;
+	p->philos[0].teat = atoui(argv[3], &p->errno) * 1000;
+	p->philos[0].tsleep = atoui(argv[4], &p->errno) * 1000;
 	if (argc == 6)
 		p->philos[0].full_tgt = atoui(argv[5], &p->errno);
 	if (p->errno)

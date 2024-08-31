@@ -4,6 +4,7 @@ PREFIX =
 COMPILE_FLAGS = -Wall -Wextra -Werror -pthread
 LINK_FLAGS = -pthread
 INCLUDES = -I.
+MEMCHECK = valgrind --leak-check=full
 
 all: $(NAME)
 
@@ -44,20 +45,30 @@ test2:
 debug2:
 	gdbtui --args $(test2_cmd)
 
+test3_cmd = ./$(NAME) 5 800 200 200 7
+
 test3:
 	#everybody lives until they've eaten 7 times
-	./$(NAME) 5 800 200 200 7
+	eval $(test3_cmd)
 	#everybody got full
+
+memcheck:
+	$(PREFIX)$(MEMCHECK) ./$(NAME) 2 800 200 200 1
 
 test4:
 	#everybody lives
 	./$(NAME) 4 410 200 200
 	#everybody lived until you killed them
 
+test5_cmd = ./$(NAME) 3 310 200 100
+
 test5:
 	#one dies
-	./$(NAME) 3 310 200 100
-	#one died, why did you kill the others?
+	eval $(test5_cmd)
+	#one died
+
+memcheck5:
+	$(PREFIX)$(MEMCHECK) $(test5_cmd)
 
 test6_cmd = ./$(NAME) 2 800 200 100
 

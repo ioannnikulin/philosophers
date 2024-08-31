@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/28 19:55:51 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/31 14:03:46 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,13 @@ static int	birth(t_philo **p, void *arg, int *errno)
 	first_meal = mtime(&(*p)->props->tstart, errno, (*p)->props);
 	if (*errno)
 		return (1);
-	if (first_meal < DELAY)
-		msleep(DELAY - first_meal, errno, (*p)->props);
-	if (*errno)
-		return (2);
-	first_meal = mtime(&(*p)->props->tstart, errno, (*p)->props);
-	if (*errno)
-		return (3);
+	/* if (first_meal < DELAY) */
+		/* msleep(DELAY - first_meal, errno, (*p)->props); */
+	/* if (*errno) */
+		/* return (2); */
+	/* first_meal = mtime(&(*p)->props->tstart, errno, (*p)->props); */
+	/* if (*errno) */
+		/* return (3); */
 	tsusec_set(&((*p)->last_meal), first_meal, errno);
 	if (*errno)
 		return (4);

@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/28 19:39:38 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/31 14:05:04 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,13 @@ static int	check(t_props *p)
 		state = tsull_get(&p->philos[i].state, &p->errno);
 		if (p->errno)
 			return (1);
-		if (state & DIES)
-			return (ret(p, i, DIES));
-		if (state & NEWBORN)
+		if (state & (DIES | NEWBORN))
 		{
 			tsull_release(&p->philos[i].state, &p->errno);
 			if (p->errno)
 				return (2);
+			if (state & DIES)
+				return (DIES);
 			i ++;
 			continue;
 		}
@@ -92,10 +92,10 @@ void	*moni(void *a)
 	start = mtime(&p->tstart, &p->errno, p);
 	if (p->errno > 0)
 		return (a);
-	if (start < DELAY)
-		msleep(DELAY - start, &p->errno, p);
-	if (p->errno)
-		return (a);
+	/* if (start < DELAY) */
+		/* msleep(DELAY - start, &p->errno, p); */
+	/* if (p->errno) */
+		/* return (a); */
 	while (1)
 	{
 		if ((tsull_get_release(&p->enough, &p->errno) & ENOUGH) || p->errno > 0)
