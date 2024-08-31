@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/22 20:32:04 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/31 16:01:08 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@
 # define TX_ERR_MUTEX_STATE_UNLOCK "Simulation state mutex unlock failure"
 # define TX_ERR_MUTEX_IND_STATE_LOCK "Philosopher state mutex lock failure"
 # define TX_ERR_MUTEX_IND_STATE_UNLOCK "Philosopher state mutex unlock failure"
-# define TX_ERR_MUTEX_IND_LAST_MEAL_LOCK "Philosopher last meal mutex lock failure"
+# define TX_ERR_MUTEX_IND_LAST_MEAL_LOCK "Philosopher last meal mutex lock \
+	failure"
 # define TX_ERR_MUTEX_IND_LAST_MEAL_UNLOCK "Philosopher last meal mutex unlock \
 	failure"
 # define TX_ERR_MUTEX_TIMER_LOCK "Failed to lock timer mutex"

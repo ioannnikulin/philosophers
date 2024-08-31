@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/31 14:18:10 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/08/31 16:42:04 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,6 @@ t_usec	mtime(t_usec *t, int *errno, t_props *p)
 	t_usec			res;
 
 	assign(errno, 0, 0);
-	#ifdef TIMER_MUTEX
-	if (m_lock(&p->mtime))
-	{
-		finalize(p, REPORT_FATAL, msg(TX_ERR_MUTEX_TIMER_LOCK, 0), 0);
-		return (assign(errno, 1, 0));
-	}
-	#endif
 	if (gettimeofday(&tv, 0))
 	{
 		finalize(p, REPORT_FATAL, msg(TX_ERR_TIMER, 0), 0);
@@ -33,13 +26,6 @@ t_usec	mtime(t_usec *t, int *errno, t_props *p)
 	res = tv.tv_sec * 1000000 + tv.tv_usec;
 	if (t)
 		res -= *t;
-	#ifdef TIMER_MUTEX
-	if (m_unlock(&p->mtime))
-	{
-		finalize(p, REPORT_FATAL, msg(TX_ERR_MUTEX_TIMER_UNLOCK, 0), 0);
-		return (assign(errno, 1, 0));
-	}
-	#endif
 	return (res);
 }
 
@@ -57,8 +43,9 @@ void	msleep(t_usec t, int *errno, t_props *p)
 	while (!*errno)
 	{
 		now = mtime(&p->tstart, errno, p);
-		if (now >= t + start) // TODO: introduce step as 10% of min time in input?
+		if (now >= t + start)
 			break ;
+		usleep(100);
 	}
 	if (*errno)
 		finalize(p, REPORT_FATAL, msg(TX_ERR_SLEEP, 0), 0);
