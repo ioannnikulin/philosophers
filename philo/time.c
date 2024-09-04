@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/31 16:42:04 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/09/04 16:15:13 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ t_usec	mtime(t_usec *t, int *errno, t_props *p)
 	assign(errno, 0, 0);
 	if (gettimeofday(&tv, 0))
 	{
-		finalize(p, REPORT_FATAL, msg(TX_ERR_TIMER, 0), 0);
+		finalize(p, REPORT_FATAL, msg(TX_ERR_TIMER, 0, 1), 0);
 		return (assign(errno, 1, 0));
 	}
 	res = tv.tv_sec * 1000000 + tv.tv_usec;
@@ -37,7 +37,7 @@ void	msleep(t_usec t, int *errno, t_props *p)
 	start = mtime(&p->tstart, errno, p);
 	if (*errno)
 	{
-		finalize(p, REPORT_FATAL, msg(TX_ERR_SLEEP, 0), 0);
+		finalize(p, REPORT_FATAL, msg(TX_ERR_SLEEP, 0, 1), 0);
 		return ;
 	}
 	while (!*errno)
@@ -48,5 +48,5 @@ void	msleep(t_usec t, int *errno, t_props *p)
 		usleep(100);
 	}
 	if (*errno)
-		finalize(p, REPORT_FATAL, msg(TX_ERR_SLEEP, 0), 0);
+		finalize(p, REPORT_FATAL, msg(TX_ERR_SLEEP, 0, 1), 0);
 }

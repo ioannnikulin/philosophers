@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/09/04 14:13:43 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/09/04 16:04:51 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ typedef struct s_fin_param
 {
 	char	*msg;
 	t_usec	time;
+	int		lock_print;
 }	t_fin_param;
 
 int			usage(int ret);
@@ -125,7 +126,7 @@ int			smart_wait(t_philo *p, t_usec before, int *errno);
 void		*moni(void *a);
 int			report(t_philo *p, int action, t_usec t);
 int			finalize(t_props *p, int mode, t_fin_param msg, int ret);
-t_fin_param	msg(char *msg, t_usec time);
+t_fin_param	msg(char *msg, t_usec time, int lock_print);
 
 char		*state_description(int state);
 

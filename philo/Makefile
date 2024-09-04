@@ -29,7 +29,7 @@ test1_cmd = ./$(NAME) 1 800 200 200
 
 test1:
 	#shouldn't eat a single time and dies
-	eval $(test1_cmd)
+	$(PREFIX)eval $(test1_cmd)
 	#didn't eat a single time and died
 
 debug1:
@@ -49,7 +49,7 @@ test3_cmd = ./$(NAME) 5 800 200 200 7
 
 test3:
 	#everybody lives until they've eaten 7 times
-	eval $(test3_cmd)
+	$(PREFIX)eval $(test3_cmd)
 	#everybody got full
 
 memcheck:
@@ -57,7 +57,7 @@ memcheck:
 
 test4:
 	#everybody lives
-	./$(NAME) 4 410 200 200
+	$(PREFIX)./$(NAME) 4 410 200 200
 	#everybody lived until you killed them
 
 test5_cmd = ./$(NAME) 3 310 200 100
@@ -77,12 +77,45 @@ debug6:
 
 test6:
 	#both live
-	eval $(test6_cmd)
+	$(PREFIX)eval $(test6_cmd)
 	#both lived until you killed them
 
 test7:
 	#many live
-	./$(NAME) 150 800 200 100
+	$(PREFIX)./$(NAME) 150 800 200 100
 	#they all lived until you killed them
+
+invalid_arg11 = ./$(NAME) a 1 2 3
+invalid_arg12 = ./$(NAME) -1 1 2 3
+invalid_arg13 = ./$(NAME) 999999999999999 1 2 3
+invalid_arg21 = ./$(NAME) 1 a 1 2
+invalid_arg22 = ./$(NAME) 1 -1 1 2
+invalid_arg23 = ./$(NAME) 1 999999999999999 1 2
+invalid_arg31 = ./$(NAME) 1 2 a 1
+invalid_arg32 = ./$(NAME) 1 2 -1 1
+invalid_arg33 = ./$(NAME) 1 2 999999999999999 1
+invalid_arg41 = ./$(NAME) 1 2 3 a
+invalid_arg42 = ./$(NAME) 1 2 3 -1
+invalid_arg43 = ./$(NAME) 1 2 3 999999999999999
+invalid_arg51 = ./$(NAME) 1 2 3 4 a
+invalid_arg52 = ./$(NAME) 1 2 3 4 -1
+invalid_arg53 = ./$(NAME) 1 2 3 4 999999999999999
+
+invalid_args:
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg11)
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg12)
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg13)
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg21)
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg22)
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg23)
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg31)
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg32)
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg33)
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg41)
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg42)
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg43)
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg51)
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg52)
+	-$(PREFIX)$(MEMCHECK) $(invalid_arg53)
 
 PHONY: all clean fclean re

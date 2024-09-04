@@ -6,18 +6,19 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/31 17:42:22 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/09/04 16:57:14 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosop.h"
 
-t_fin_param	msg(char *msg, t_usec time)
+t_fin_param	msg(char *msg, t_usec time, int lock_print)
 {
 	t_fin_param	res;
 
 	res.msg = msg;
 	res.time = time;
+	res.lock_print = lock_print;
 	return (res);
 }
 
@@ -42,16 +43,17 @@ static int	mutexes(t_props *p, int mode)
 	ret = 0;
 	while (i < p->sz)
 	{
-		if (p->philos[i].i == -1)
+		if (p->philos[i ++].i == -1)
+		{
 			continue ;
-		ph = &p->philos[i];
+		}
+		ph = &p->philos[i - 1];
 		ret = ret | mutex(mode & DESTROY_M_LAST_MEAL, &ph->last_meal.m);
 		ret = ret | mutex(mode & DESTROY_M_STATE, &ph->state.m);
-		i ++;
 	}
 	if (mode & UNLOCK_PRINT)
 		if (m_unlock(&p->print_poll))
-			finalize(0, 0, msg(TX_ERR_MUTEX_PRINT_UNLOCK, 0), 0);
+			finalize(0, 0, msg(TX_ERR_MUTEX_PRINT_UNLOCK, 0, 0), 0);
 	ret = ret | mutex(mode & DESTROY_M_PRINT, &p->print_poll);
 	ret = ret | mutex(mode & DESTROY_M_TIME, &p->mtime);
 	return (0);
@@ -61,12 +63,12 @@ static int	msg_processing(t_props *p, t_fin_param msgp)
 {
 	if (!msgp.time && p)
 		msgp.time = mtime(&p->tstart, &p->errno, p);
-	if (m_lock(&p->print_poll))
-		return (finalize(p, REPORT_FATAL, msg(TX_ERR_MUTEX_PRINT_LOCK, 0), 1));
+	if (msgp.lock_print && m_lock(&p->print_poll))
+		return (finalize(p, REPORT_FATAL, msg(TX_ERR_MUTEX_PRINT_LOCK, 0, 0), 1));
 	prints("\n", prints(msgp.msg, prints(": ", printlli(msgp.time, 0))));
-	if (m_unlock(&p->print_poll))
+	if (msgp.lock_print && m_unlock(&p->print_poll))
 		return (finalize(p, REPORT_FATAL, 
-				msg(TX_ERR_MUTEX_PRINT_UNLOCK, 0), 1));
+				msg(TX_ERR_MUTEX_PRINT_UNLOCK, 0, 0), 1));
 	return (0);
 }
 

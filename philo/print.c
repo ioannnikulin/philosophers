@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 16:21:26 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/31 17:45:49 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/09/04 16:17:40 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	print(long long int printed, long long int happened,
 	s[25] = 0;
 	prints(&s[printlli(printed, 15)], 0);
 	prints(&s[printlli(happened, 15)], 0);
-	prints(&s[printlli(p->i, 20)], 0);
+	prints(&s[printlli(p->i + 1, 20)], 0);
 	prints(&s[prints(state_description(state), 0)], 0);
 	printlli(p->times_eaten, 0);
 	prints("\n", 0);
@@ -41,7 +41,7 @@ void	print(long long int printed, long long int happened,
 	(void)printed;
 	printlli(happened / 1000, 0);
 	prints(" ", 0);
-	printlli(p->i, 0);
+	printlli(p->i + 1, 0);
 	prints(" ", 0);
 	prints(state_description(state), 0);
 	prints("\n", 0);

@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 18:09:09 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/31 18:37:54 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/09/04 16:16:44 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	put_fork(t_philo *p, int which, int set_state)
 	other = choose_fork(p, TOOK_BOTH ^ which);
 	if (m_unlock(this))
 	{
-		finalize(0, 0, msg(TX_ERR_FORK_PUT, 0), 1);
+		finalize(0, 0, msg(TX_ERR_FORK_PUT, 0, 1), 1);
 		put_fork(p, TOOK_BOTH ^ which, set_state);
 		return (1);
 	}
