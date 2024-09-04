@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:07:40 by inikulin          #+#    #+#             */
-/*   Updated: 2024/09/04 16:12:16 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/09/04 17:02:09 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ static int	start_all(t_props *props)
 	i = 0;
 	while (i < props->sz)
 		if (start_philo(props, i ++))
-			return (finalize(props, STAGE_2, msg(TX_ERR_THREAD_START, 0, 1), 1));
+			return (finalize(props, STAGE_2,
+					msg(TX_ERR_THREAD_START, 0, 1), 1));
 	if (pthread_create(&props->monitor, 0, moni, props))
 		return (finalize(props, STAGE_2, msg(TX_ERR_THREAD_START, 0, 1), 1));
 	return (0);

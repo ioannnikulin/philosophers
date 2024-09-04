@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2024/09/04 16:08:32 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/09/04 17:04:15 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,8 @@ static int	parse_args(t_props *p, int argc, char **argv)
 	if (argc == 6)
 		p->philos[0].full_tgt = atoui(argv[5], &p->errno);
 	if (p->errno)
-		return (usage(finalize(p, FREE_PHILOS, msg(TX_ERR_NUM_FORMAT, 0, 0), 1)));
+		return (usage(finalize(p, FREE_PHILOS,
+					msg(TX_ERR_NUM_FORMAT, 0, 0), 1)));
 	return (0);
 }
 
