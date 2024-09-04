@@ -80,4 +80,9 @@ test6:
 	eval $(test6_cmd)
 	#both lived until you killed them
 
+test7:
+	#many live
+	./$(NAME) 150 800 200 100
+	#they all lived until you killed them
+
 PHONY: all clean fclean re

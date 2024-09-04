@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/31 18:40:42 by inikulin         ###   ########.fr       */
+/*   Updated: 2024/09/04 14:13:43 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@
 # define STAGE_1 1031
 # define STAGE_2 1535
 
-struct					s_philo;
+struct	s_philo;
 
 typedef struct s_props
 {
