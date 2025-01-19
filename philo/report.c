@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   report.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2024/09/04 16:11:18 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/19 21:08:05 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	report(t_philo *p, int state, t_usec t)
 	if ((state & EATS) && p->times_eaten + 1 == p->full_tgt)
 	{
 		p->props->full_philos ++;
-		if (p->props->full_philos == p->props->sz)
+		if (p->props->full_philos >= p->props->sz)
 			return (finalize(p->props, REPORT_FATAL | UNLOCK_PRINT,
 					msg(ifc(PRINT_MODE == PRINT_FULL, TX_FULL, 0), t, 1), 1));
 	}
