@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosop.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/25 17:54:20 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 19:51:36 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,15 @@
 
 struct	s_philo;
 
+typedef struct s_states
+{
+	t_ull	newborn;
+	t_ull	eats;
+	t_ull	sleeps;
+	t_ull	thinks;
+	t_ull	takes;
+}	t_states;
+
 typedef struct s_props
 {
 	unsigned int	sz;
@@ -78,6 +87,7 @@ typedef struct s_props
 	unsigned int	full_philos;
 	t_s_ull			errno;
 	pthread_t		monitor;
+	t_states		states;
 }	t_props; 
 /* full_philos controlled by print_poll too */
 
@@ -107,6 +117,8 @@ typedef struct s_philo
 	int			full_tgt;
 	time_t		delta;
 	t_props		*props;
+	t_s_ull		errno;
+	t_states	states;
 }	t_philo;
 
 typedef struct s_fin_param
@@ -121,8 +133,8 @@ int			init(t_props *p, int argc, char **argv);
 int			setup(t_props *p);
 void		*philo(void *arg);
 void		*philo_ret(t_philo *p, int code);
-int			take_fork(t_philo *p, int which, int set_state, int *errno);
-int			smart_wait(t_philo *p, t_usec before, int *errno);
+int			take_fork(t_philo *p, int which, int set_state, t_s_ull *errno);
+int			smart_wait(t_philo *p, t_usec before, t_s_ull *errno);
 void		*moni(void *a);
 int			report(t_philo *p, int action, t_usec t);
 int			finalize(t_props *p, int mode, t_fin_param msg, int ret);
@@ -130,13 +142,13 @@ t_fin_param	msg(char *msg, t_usec time, int lock_print);
 
 char		*state_description(int state);
 
-t_usec		mtime(t_usec *t, int *ok, t_props *p);
-void		msleep(t_usec t, int *errno, t_props *p);
+t_usec		mtime(t_usec *t, t_s_ull *errno, t_props *p);
+void		msleep(t_usec t, t_s_ull *errno, t_props *p);
 void		print(long long int printed, long long int happened,
 				t_philo *p, int state);
 
-t_usec		prepare_to_eat(t_philo *p, int *errno);
-int			eat(t_philo *p, int *errno);
+t_usec		prepare_to_eat(t_philo *p, t_s_ull *errno);
+int			eat(t_philo *p, t_s_ull *errno);
 int			die_and_drop_forks(t_philo *p, int block_first);
 int			put_fork(t_philo *p, int which, int set_state);
 #endif

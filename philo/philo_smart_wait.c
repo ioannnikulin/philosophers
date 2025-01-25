@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_smart_wait.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 18:09:09 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/31 18:27:25 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 21:19:45 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,16 +36,16 @@ static void	wait_time(t_philo *p, t_usec time)
 }
 #endif
 
-int	smart_wait(t_philo *p, t_usec before, int *errno)
+int	smart_wait(t_philo *p, t_usec before, t_s_ull *errno)
 {
 	t_usec	towait;
 
-	if (*errno)
+	if (tsull_get_release(errno, 0))
 		return (1);
 	if (p->times_eaten == 0)
 	{
 		msleep(p->wait_before, errno, p->props);
-		if (*errno)
+		if (tsull_get_release(errno, 0))
 			return (2);
 		return (0);
 	}
@@ -59,5 +59,5 @@ int	smart_wait(t_philo *p, t_usec before, int *errno)
 			towait = (p->tdie - p->tsleep - p->teat) * 0.7;
 		msleep(towait, errno, p->props);
 	}
-	return (*errno);
+	return (tsull_get_release(errno, 0));
 }

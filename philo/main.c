@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:07:40 by inikulin          #+#    #+#             */
-/*   Updated: 2024/09/04 17:02:09 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 19:32:48 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	main(int argc, char **argv)
 	if (init(&props, argc, argv))
 		return (1);
 	props.tstart = mtime(0, &props.errno, &props);
-	if (props.errno)
+	if (tsull_get_release(&props.errno, 0))
 		return (finalize(&props, STAGE_2, msg(TX_ERR_TIMER, 0, 1), 1));
 	setup(&props);
 	if (start_all(&props))

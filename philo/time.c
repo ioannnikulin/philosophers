@@ -3,25 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/09/04 16:15:13 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 19:17:01 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosop.h"
 
-t_usec	mtime(t_usec *t, int *errno, t_props *p)
+t_usec	mtime(t_usec *t, t_s_ull *errno, t_props *p)
 {
 	struct timeval	tv;
 	t_usec			res;
 
-	assign(errno, 0, 0);
 	if (gettimeofday(&tv, 0))
 	{
 		finalize(p, REPORT_FATAL, msg(TX_ERR_TIMER, 0, 1), 0);
-		return (assign(errno, 1, 0));
+		tsull_set_release(errno, 0, 1, 0);
+		return (0);
 	}
 	res = tv.tv_sec * 1000000 + tv.tv_usec;
 	if (t)
@@ -29,24 +29,24 @@ t_usec	mtime(t_usec *t, int *errno, t_props *p)
 	return (res);
 }
 
-void	msleep(t_usec t, int *errno, t_props *p)
+void	msleep(t_usec t, t_s_ull *errno, t_props *p)
 {
 	t_usec	start;
 	t_usec	now;
 
 	start = mtime(&p->tstart, errno, p);
-	if (*errno)
+	if (tsull_get_release(errno, 0))
 	{
 		finalize(p, REPORT_FATAL, msg(TX_ERR_SLEEP, 0, 1), 0);
 		return ;
 	}
-	while (!*errno)
+	while (!tsull_get_release(errno, 0))
 	{
 		now = mtime(&p->tstart, errno, p);
 		if (now >= t + start)
 			break ;
 		usleep(100);
 	}
-	if (*errno)
+	if (tsull_get_release(errno, 0))
 		finalize(p, REPORT_FATAL, msg(TX_ERR_SLEEP, 0, 1), 0);
 }

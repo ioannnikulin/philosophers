@@ -3,60 +3,64 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/31 18:25:40 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 22:16:21 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosop.h"
 
-static int	birth(t_philo **p, void *arg, int *errno)
+static int	birth(t_philo **p, void *arg)
 {
 	t_usec	first_meal;
 
 	*p = (t_philo *)arg;
-	assign(errno, 0, 0);
-	first_meal = mtime(&(*p)->props->tstart, errno, (*p)->props);
-	if (*errno)
+	first_meal = mtime(&(*p)->props->tstart, &(*p)->errno, (*p)->props);
+	if (tsull_get_release(&(*p)->errno, 0))
 		return (1);
-	tsusec_set(&((*p)->last_meal), first_meal, errno);
-	if (*errno)
+	tsusec_set(&((*p)->last_meal), first_meal, &(*p)->errno);
+	if (tsull_get_release(&(*p)->errno, 0))
 		return (4);
-	tsull_set_release(&((*p)->state), NEWBORN, THINKS, errno);
-	if (*errno)
+	tsull_set_release(&((*p)->state), &(*p)->states.newborn, THINKS,
+		&(*p)->errno);
+	if (tsull_get_release(&(*p)->errno, 0))
 		return (5);
 	return (0);
 }
 
-static int	think(t_philo *p, int *errno)
+static int	think(t_philo *p, t_s_ull *errno)
 {
 	return (report(p, THINKS, mtime(&p->props->tstart, errno, p->props)));
 }
 
-static void	*philo_sleep(t_philo *p, int *errno)
+static void	*philo_sleep(t_philo *p, t_s_ull *errno)
 {
-	tsull_set_release(&p->state, EATS, SLEEPS, errno);
-	if (*errno)
-		return (philo_ret(p, 300 + *errno));
-	if (report(p, SLEEPS, mtime(&p->props->tstart, errno, p->props)) || *errno)
+	int	e;
+
+	tsull_set_release(&p->state, &p->states.eats, SLEEPS, errno);
+	e = tsull_get_release(errno, 0);
+	if (e)
+		return (philo_ret(p, 300 + e));
+	if (report(p, SLEEPS, mtime(&p->props->tstart, errno, p->props))
+		|| tsull_get_release(errno, 0))
 		return (philo_ret(p, 10));
 	msleep(p->tsleep, errno, p->props);
-	if (*errno)
+	if (tsull_get_release(errno, 0))
 		return (philo_ret(p, 13));
-	tsull_set_release(&p->state, SLEEPS, THINKS, errno);
-	if (*errno)
+	tsull_set_release(&p->state, &p->states.sleeps, THINKS, errno);
+	if (tsull_get_release(errno, 0))
 		return (philo_ret(p, 11));
 	return (0);
 }
 
-static void	*check_death(t_philo *p, int *errno)
+static void	*check_death(t_philo *p, t_s_ull *errno)
 {
 	t_ull	state;
 
 	state = tsull_get(&p->state, errno);
-	if (*errno || (state & ANY_UNALIVE))
+	if (tsull_get_release(errno, 0) || (state & ANY_UNALIVE))
 	{
 		tsull_release(&p->state, errno);
 		return (philo_ret(p, 200 + state));
@@ -68,20 +72,23 @@ static void	*check_death(t_philo *p, int *errno)
 void	*philo(void *arg)
 {
 	t_philo	*p;
-	int		errno;
+	int		e;
 
-	if (birth(&p, arg, &errno))
+	if (birth(&p, arg))
 		return (philo_ret(p, 7));
 	while (1)
 	{
-		if (errno || think(p, &errno) || errno)
+		if (tsull_get_release(&p->errno, 0) || think(p, &p->errno) 
+			|| tsull_get_release(&p->errno, 0))
 			return (philo_ret(p, 8));
-		prepare_to_eat(p, &errno);
-		if (errno)
-			return (philo_ret(p, errno));
-		eat(p, &errno);
-		if (errno || philo_sleep(p, &errno) || errno
-			|| check_death(p, &errno) || errno)
+		prepare_to_eat(p, &p->errno);
+		e = tsull_get_release(&p->errno, 0);
+		if (e)
+			return (philo_ret(p, e));
+		eat(p, &p->errno);
+		if (tsull_get_release(&p->errno, 0) || philo_sleep(p, &p->errno)
+			|| tsull_get_release(&p->errno, 0) || check_death(p, &p->errno)
+			|| tsull_get_release(&p->errno, 0))
 			return (arg);
 	}
 }

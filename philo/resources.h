@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   resources.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/31 16:01:08 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 18:45:39 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 # define TX_ERR_MUTEX_IND_STATE_UNLOCK "Philosopher state mutex unlock failure"
 # define TX_ERR_MUTEX_IND_LAST_MEAL_LOCK "Philosopher last meal mutex lock \
 	failure"
+# define TX_ERR_MUTEX_IND_ERRNO_LOCK "Philosopher errno mutex lock failure"
+# define TX_ERR_MUTEX_IND_ERRNO_UNLOCK "Philosopher errno mutex unlock failure"
 # define TX_ERR_MUTEX_IND_LAST_MEAL_UNLOCK "Philosopher last meal mutex unlock \
 	failure"
 # define TX_ERR_MUTEX_TIMER_LOCK "Failed to lock timer mutex"

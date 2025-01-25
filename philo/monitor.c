@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/25 17:47:23 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 19:48:50 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,25 +27,25 @@ static int	end(t_props *p)
 
 static int	ret(t_philo *p, int if_ok)
 {
-	int	errno;
+	int	e;
 
-	errno = 0;
-	tsull_release(&p->state, &errno);
-	if (errno)
-		return (errno);
+	tsull_release(&p->state, &p->errno);
+	e = tsull_get_release(&p->errno, 0);
+	if (e)
+		return (e);
 	return (if_ok);
 }
 
-static int	died_hungry(t_philo *p, int *errno)
+static int	died_hungry(t_philo *p, t_s_ull *errno)
 {
 	t_usec	last_meal;
 	t_usec	hungry_for;
 
 	last_meal = tsusec_get(&p->last_meal, errno);
-	if (*errno)
+	if (tsull_get_release(errno, 0))
 		return (ret(p, 3));
 	hungry_for = mtime(&last_meal, errno, p->props) - p->props->tstart;
-	if (*errno)
+	if (tsull_get_release(errno, 0))
 		return (ret(p, 4));
 	if (hungry_for > p->tdie)
 	{
@@ -65,12 +65,12 @@ static int	check(t_props *p)
 	while (i < p->sz)
 	{
 		state = tsull_get(&p->philos[i].state, &p->errno);
-		if (p->errno)
+		if (tsull_get_release(&p->errno, 0))
 			return (1);
 		if (state & (DIES | NEWBORN))
 		{
 			tsull_release(&p->philos[i ++].state, &p->errno);
-			if (p->errno)
+			if (tsull_get_release(&p->errno, 0))
 				return (2);
 			if (state & DIES)
 				return (DIES);
@@ -79,7 +79,7 @@ static int	check(t_props *p)
 		if (died_hungry(&p->philos[i], &p->errno))
 			return (DIES);
 		tsull_release(&p->philos[i ++].state, &p->errno);
-		if (p->errno)
+		if (tsull_get_release(&p->errno, 0))
 			return (5);
 	}
 	return (0);
@@ -91,12 +91,12 @@ void	*moni(void *a)
 	int		check_result;
 
 	p = (t_props *)a;
-	assign(&p->errno, 0, 0);
-	if (p->errno > 0)
+	if (tsull_get_release(&p->errno, 0))
 		return (a);
 	while (1)
 	{
-		if ((tsull_get_release(&p->enough, &p->errno) & ENOUGH) || p->errno > 0)
+		if ((tsull_get_release(&p->enough, &p->errno) & ENOUGH)
+			|| tsull_get_release(&p->errno, 0))
 			break ;
 		check_result = check(p);
 		if (check_result)

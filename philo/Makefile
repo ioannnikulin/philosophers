@@ -4,11 +4,12 @@ PREFIX =
 COMPILE_FLAGS = -Wall -Wextra -Werror -pthread
 LINK_FLAGS = -pthread
 INCLUDES = -I.
-MEMCHECK = valgrind --tool=helgrind
+MEMCHECK = valgrind --leak-check=full
+DATARACE = valgrind --tool=helgrind 
 
 all: $(NAME)
 
-SRCS = init.c philo.c report.c setup.c utils.c main.c finalize.c wrappers.c t_s_ull.c t_s_ull_math.c t_s_usec.c monitor.c time.c print.c print_utils.c state_description.c philo_eating.c die_and_drop_forks.c philo_ret.c philo_smart_wait.c philo_forks.c
+SRCS = init.c philo.c report.c setup.c utils.c main.c finalize.c wrappers.c t_s_ull.c t_s_ull_math.c t_s_usec.c monitor.c time.c print.c print_utils.c state_description.c philo_eating.c die_and_drop_forks.c philo_ret.c philo_smart_wait.c philo_forks.c t_s_ull_w.c atoui.c
 OBJS = $(SRCS:.c=.o)
 
 $(NAME): $(OBJS)
@@ -54,6 +55,9 @@ test3:
 
 memcheck:
 	$(PREFIX)$(MEMCHECK) ./$(NAME) 2 800 200 200 1
+
+racecheck:
+	$(PREFIX)$(DATARACE) ./$(NAME) 1 800 200 200 1
 
 test4:
 	#everybody lives

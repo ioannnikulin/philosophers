@@ -3,52 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/25 17:57:14 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 22:12:51 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosop.h"
 
-static unsigned int	atoui(const char *nptr, t_s_ull *errno)
-{
-	unsigned long	res;
-	size_t			cur;
-	int				smth;
-
-	res = 0;
-	cur = 0;
-	smth = 0;
-	while (nptr[cur] && (nptr[cur] > 47 && nptr[cur] < 58))
-	{
-		res = res * 10 + nptr[cur ++] - '0';
-		if (res > UINT_MAX)
-		{
-			tsull_set_release(errno, 0, 1);
-			return (0);
-		}
-		smth = 1;
-	}
-	if (nptr[cur] || smth == 0)
-	{
-		*errno = 1;
-		return (0);
-	}
-	return (res);
-}
-
-static int	parse_args(t_props *p, int argc, char **argv)
+static int	prefill_philos(t_props *p)
 {
 	unsigned int	i;
 
-	p->sz = atoui(argv[1], &p->errno);
-	if (!p->sz || p->errno)
-		return (usage(finalize(0, 0, msg(TX_ERR_NUM_FORMAT, 0, 0), 1)));
-	p->philos = mcalloc(sizeof(t_philo) * p->sz);
-	if (!p->philos)
-		return (finalize(0, 0, msg(TX_ERR_MALLOC, 0, 0), 1));
 	i = 0;
 	while (i < p->sz)
 	{
@@ -56,12 +23,27 @@ static int	parse_args(t_props *p, int argc, char **argv)
 		p->philos[i].last_meal.v = -1;
 		i ++;
 	}
-	p->philos[0].tdie = atoui(argv[2], &p->errno) * 1000;
-	p->philos[0].teat = atoui(argv[3], &p->errno) * 1000;
-	p->philos[0].tsleep = atoui(argv[4], &p->errno) * 1000;
+	return (0);
+}
+
+static int	parse_args(t_props *p, int argc, char **argv)
+{
+	int		errno;
+
+	errno = 0;
+	p->sz = atoui(argv[1], &errno);
+	if (!p->sz || errno)
+		return (usage(finalize(0, 0, msg(TX_ERR_NUM_FORMAT, 0, 0), 1)));
+	p->philos = mcalloc(sizeof(t_philo) * p->sz);
+	if (!p->philos)
+		return (finalize(0, 0, msg(TX_ERR_MALLOC, 0, 0), 1));
+	prefill_philos(p);
+	p->philos[0].tdie = atoui(argv[2], &errno) * 1000;
+	p->philos[0].teat = atoui(argv[3], &errno) * 1000;
+	p->philos[0].tsleep = atoui(argv[4], &errno) * 1000;
 	if (argc == 6)
-		p->philos[0].full_tgt = atoui(argv[5], &p->errno);
-	if (p->errno)
+		p->philos[0].full_tgt = atoui(argv[5], &errno);
+	if (errno)
 		return (usage(finalize(p, FREE_PHILOS,
 					msg(TX_ERR_NUM_FORMAT, 0, 0), 1)));
 	return (0);
@@ -69,12 +51,15 @@ static int	parse_args(t_props *p, int argc, char **argv)
 
 static int	init_mutexes(t_philo *p)
 {
-	if (m_init(&p->state.m) || m_init(&p->last_meal.m))
+	if (m_init(&p->state.m) || m_init(&p->last_meal.m)
+		|| m_init(&p->errno.m))
 		return (1);
 	p->last_meal.e_lock = TX_ERR_MUTEX_IND_LAST_MEAL_LOCK;
 	p->last_meal.e_unlock = TX_ERR_MUTEX_IND_LAST_MEAL_UNLOCK;
 	p->state.e_lock = TX_ERR_MUTEX_IND_STATE_LOCK;
 	p->state.e_unlock = TX_ERR_MUTEX_IND_STATE_UNLOCK;
+	p->errno.e_lock = TX_ERR_MUTEX_IND_ERRNO_LOCK;
+	p->errno.e_unlock = TX_ERR_MUTEX_IND_ERRNO_UNLOCK;
 	return (0);
 }
 
@@ -92,7 +77,14 @@ static int	clone_philo(t_props *p, int f, int t)
 	p->philos[t].full_tgt = p->philos[f].full_tgt;
 	p->philos[t].delta = 20;
 	p->philos[t].props = p;
+	p->philos[t].states.newborn = NEWBORN;
+	p->philos[t].states.sleeps = SLEEPS;
+	p->philos[t].states.eats = EATS;
+	p->philos[t].states.thinks = THINKS;
+	p->philos[t].states.takes = TAKES;
 	p->philos[t].state.v = NEWBORN;
+	p->philos[t].errno.v = 0;
+	tsull_set_release(&p->philos[t].errno, 0, 0, 0);
 	return (0);
 }
 
@@ -106,7 +98,7 @@ int	init(t_props *p, int argc, char **argv)
 	p->forks = mcalloc(sizeof(t_mutex) * p->sz);
 	if (!p->threads || !p->forks)
 		return (finalize(p, STAGE_1, msg(TX_ERR_MALLOC, 0, 0), 1));
-	if (m_init(&p->print_poll))
+	if (m_init(&p->print_poll) || m_init(&p->errno.m))
 		return (finalize(p, STAGE_1, msg(TX_ERR_MUTEX_INIT, 0, 0), 1));
 	if (m_init(&p->mtime))
 		return (finalize(p, STAGE_1 | DESTROY_M_TIME,
