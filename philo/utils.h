@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/31 17:59:43 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 18:20:17 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,17 +59,6 @@ int			m_init(t_mutex *m);
 int			m_kill(t_mutex *m);
 int			m_lock(t_mutex *m);
 int			m_unlock(t_mutex *m);
-
-int			tsint_get(t_s_int *i, int *errno);
-int			tsint_get_release(t_s_int *i, int *errno);
-t_s_int		*tsint_set(t_s_int *i, int oldval, int newval, int *errno);
-t_s_int		*tsint_set_release(t_s_int *i, int oldval, int newval, int *errno);
-t_s_int		*tsint_add(t_s_int *i, int val, int *errno);
-t_s_int		*tsint_or(t_s_int *i, int val, int *errno);
-t_s_int		*tsint_or_release(t_s_int *i, int val, int *errno);
-t_s_int		*tsint_nor(t_s_int *i, int val, int *errno);
-t_s_int		*tsint_nor_release(t_s_int *i, int val, int *errno);
-int			tsint_release(t_s_int *i, int *errno);
 
 t_ull		tsull_get(t_s_ull *i, int *errno);
 t_ull		tsull_get_release(t_s_ull *i, int *errno);

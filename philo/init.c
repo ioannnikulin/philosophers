@@ -6,13 +6,13 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2024/09/04 17:04:15 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 17:57:14 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosop.h"
 
-static unsigned int	atoui(const char *nptr, int *errno)
+static unsigned int	atoui(const char *nptr, t_s_ull *errno)
 {
 	unsigned long	res;
 	size_t			cur;
@@ -26,7 +26,7 @@ static unsigned int	atoui(const char *nptr, int *errno)
 		res = res * 10 + nptr[cur ++] - '0';
 		if (res > UINT_MAX)
 		{
-			*errno = 1;
+			tsull_set_release(errno, 0, 1);
 			return (0);
 		}
 		smth = 1;

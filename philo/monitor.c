@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
-/*   Updated: 2024/08/31 16:40:08 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 17:47:23 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,12 +88,10 @@ static int	check(t_props *p)
 void	*moni(void *a)
 {
 	t_props	*p;
-	t_usec	start;
 	int		check_result;
 
 	p = (t_props *)a;
 	assign(&p->errno, 0, 0);
-	start = mtime(&p->tstart, &p->errno, p);
 	if (p->errno > 0)
 		return (a);
 	while (1)

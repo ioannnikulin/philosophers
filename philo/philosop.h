@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2024/09/04 16:04:51 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 17:54:20 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ typedef struct s_props
 	t_s_ull			enough;
 	t_usec			tstart;
 	unsigned int	full_philos;
-	int				errno;
+	t_s_ull			errno;
 	pthread_t		monitor;
 }	t_props; 
 /* full_philos controlled by print_poll too */
