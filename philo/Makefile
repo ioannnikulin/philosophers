@@ -85,6 +85,12 @@ test7:
 	$(PREFIX)./$(NAME) 150 800 200 100
 	#they all lived until you killed them
 
+
+test8:
+	#HANG
+	$(PREFIX)./$(NAME) 5 800 200 200 7
+	#Y U HANG
+
 invalid_arg11 = ./$(NAME) a 1 2 3
 invalid_arg12 = ./$(NAME) -1 1 2 3
 invalid_arg13 = ./$(NAME) 999999999999999 1 2 3
