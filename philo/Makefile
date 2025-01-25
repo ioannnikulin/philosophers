@@ -4,7 +4,7 @@ PREFIX =
 COMPILE_FLAGS = -Wall -Wextra -Werror -pthread
 LINK_FLAGS = -pthread
 INCLUDES = -I.
-MEMCHECK = valgrind --leak-check=full -s
+MEMCHECK = valgrind --tool=helgrind
 
 all: $(NAME)
 
