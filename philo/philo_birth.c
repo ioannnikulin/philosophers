@@ -1,26 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   die_and_drop_forks.c                               :+:      :+:    :+:   */
+/*   philo_birth.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/31 16:12:06 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/26 13:27:13 by inikulin         ###   ########.fr       */
+/*   Created: 2024/05/26 15:53:57 by inikulin          #+#    #+#             */
+/*   Updated: 2025/01/26 13:52:07 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosop.h"
 
-int	die_and_drop_forks(t_philo *p, int block_first)
+int	birth(t_philo **p, void *arg)
 {
-	if (block_first && m_lock(&p->state.m))
+	t_usec	first_meal;
+
+	*p = (t_philo *)arg;
+	first_meal = mtime(&(*p)->props->tstart, &(*p)->errno, (*p)->props);
+	if (tsull_get_release(&(*p)->errno, 0))
 		return (1);
-	if (p->state.v & (TOOK_L | EATS))
-		put_fork(p, TOOK_L, 0);
-	if (p->state.v & (TOOK_R | EATS))
-		put_fork(p, TOOK_R, 0);
-	p->state.v = DIES;
-	tsull_release(&p->state, 0);
+	tsusec_set(&((*p)->last_meal), first_meal, &(*p)->errno);
+	if (tsull_get_release(&(*p)->errno, 0))
+		return (4);
+	tsull_set_release(&((*p)->state), &(*p)->states.newborn, THINKS,
+		&(*p)->errno);
+	if (tsull_get_release(&(*p)->errno, 0))
+		return (5);
 	return (0);
 }

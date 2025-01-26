@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_smart_wait.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 18:09:09 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/25 21:19:45 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/26 13:51:14 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,14 @@ static void	wait_time(t_philo *p, t_usec time)
 {
 	if (m_lock(&p->props->print_poll))
 	{
-		finalize(p->props, REPORT_FATAL, msg(TX_ERR_MUTEX_PRINT_LOCK, 0), 1);
+		finalize(p->props, REPORT_FATAL, msg(TX_ERR_MUTEX_PRINT_LOCK, 0, 0), 1);
 		return ;
 	}
 	prints("\n", printull(time, prints(" for ", printlli(p->i,
 					prints("waiting ", 0)))));
 	if (m_unlock(&p->props->print_poll))
-		finalize(p->props, REPORT_FATAL, msg(TX_ERR_MUTEX_PRINT_UNLOCK, 0), 1);
+		finalize(p->props, REPORT_FATAL, msg(TX_ERR_MUTEX_PRINT_UNLOCK, 0, 0),
+			1);
 }
 #endif
 #if PRINT_MODE == PRINT_SUBMISSION
@@ -42,14 +43,15 @@ int	smart_wait(t_philo *p, t_usec before, t_s_ull *errno)
 
 	if (tsull_get_release(errno, 0))
 		return (1);
-	if (p->times_eaten == 0)
+	if (tsull_get_release(&p->times_eaten, errno) == 0)
 	{
 		msleep(p->wait_before, errno, p->props);
 		if (tsull_get_release(errno, 0))
 			return (2);
 		return (0);
 	}
-	towait = (p->wait_before + p->teat + p->tsleep + p->times_eaten
+	towait = (p->wait_before + p->teat + p->tsleep
+			+ tsull_get_release(&p->times_eaten, errno)
 			* (p->wait_period + p->teat + p->tsleep) + p->wait_period);
 	if (towait >= before)
 	{

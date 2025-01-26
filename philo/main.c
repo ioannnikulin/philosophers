@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:07:40 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/25 19:32:48 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 23:40:00 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,5 +76,5 @@ int	main(int argc, char **argv)
 	if (join_all(&props))
 		return (1);
 	return (finalize(&props, STAGE_2,
-			msg(ifc(PRINT_MODE == PRINT_FULL, TX_OVER, 0), 0, 1), 0));
+			msg(ifc(PRINT_MODE == PRINT_FULL, TX_OVER, 0), 0, 0), 0));
 }

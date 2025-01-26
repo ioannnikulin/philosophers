@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   report.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/25 19:31:05 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/26 13:49:30 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,13 @@ static int	act_die(t_philo *p, t_usec t)
 		return (finalize(p->props, REPORT_FATAL,
 				msg(TX_ERR_MUTEX_PRINT_UNLOCK, t, 0), 1));
 	return (finalize(p->props, REPORT_FATAL, msg(0, t, 0), 0));
+}
+
+static int	ass1(unsigned int *to, unsigned int val, int ret)
+{
+	if (to)
+		*to = val;
+	return (ret);
 }
 
 int	report(t_philo *p, int state, t_usec t)
@@ -40,13 +47,11 @@ int	report(t_philo *p, int state, t_usec t)
 	if ((state & ENOUGH) || tsull_get_release(&p->props->errno, 0))
 		return (finalize(p->props, UNLOCK_PRINT, msg(0, 0, 0), 1));
 	print(mtime(&p->props->tstart, 0, p->props), t, p, state);
-	if ((state & EATS) && p->times_eaten + 1 == p->full_tgt)
-	{
-		p->props->full_philos ++;
-		if (p->props->full_philos >= p->props->sz)
-			return (finalize(p->props, REPORT_FATAL | UNLOCK_PRINT,
-					msg(ifc(PRINT_MODE == PRINT_FULL, TX_FULL, 0), t, 1), 1));
-	}
+	if ((state & EATS) && tsull_get_release(&p->times_eaten, &p->props->errno)
+		+ 1 == p->full_tgt && ass1(&p->props->full_philos, p->props
+			->full_philos + 1, 1) && p->props->full_philos >= p->props->sz)
+		return (finalize(p->props, REPORT_FATAL | UNLOCK_PRINT,
+				msg(ifc(PRINT_MODE == PRINT_FULL, TX_FULL, 0), t, 1), 1));
 	if (m_unlock(&p->props->print_poll))
 		return (finalize(p->props, REPORT_FATAL,
 				msg(TX_ERR_MUTEX_PRINT_UNLOCK, t, 0), 1));

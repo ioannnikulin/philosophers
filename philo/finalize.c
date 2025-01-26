@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:27:10 by inikulin          #+#    #+#             */
-/*   Updated: 2024/09/04 17:03:56 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 23:38:34 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ static int	msg_processing(t_props *p, t_fin_param msgp)
 				msg(TX_ERR_MUTEX_PRINT_LOCK, 0, 0), 1));
 	prints("\n", prints(msgp.msg, prints(": ", printlli(msgp.time, 0))));
 	if (msgp.lock_print && m_unlock(&p->print_poll))
-		return (finalize(p, REPORT_FATAL, 
+		return (finalize(p, REPORT_FATAL,
 				msg(TX_ERR_MUTEX_PRINT_UNLOCK, 0, 0), 1));
 	return (0);
 }

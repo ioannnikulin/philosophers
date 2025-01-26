@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 18:34:04 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/25 22:12:51 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/26 12:57:09 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,11 @@ static int	parse_args(t_props *p, int argc, char **argv)
 
 static int	init_mutexes(t_philo *p)
 {
-	if (m_init(&p->state.m) || m_init(&p->last_meal.m)
-		|| m_init(&p->errno.m))
+	if (m_init(&p->state.m)
+		|| m_init(&p->last_meal.m)
+		|| m_init(&p->errno.m)
+		|| m_init(&p->times_eaten.m)
+	)
 		return (1);
 	p->last_meal.e_lock = TX_ERR_MUTEX_IND_LAST_MEAL_LOCK;
 	p->last_meal.e_unlock = TX_ERR_MUTEX_IND_LAST_MEAL_UNLOCK;
@@ -70,7 +73,7 @@ static int	clone_philo(t_props *p, int f, int t)
 	p->philos[t].i = t;
 	p->philos[t].l = &p->forks[t];
 	p->philos[(p->sz + t - 1) % p->sz].r = &p->forks[t];
-	p->philos[t].times_eaten = 0;
+	p->philos[t].times_eaten.v = 0;
 	p->philos[t].tdie = p->philos[f].tdie;
 	p->philos[t].teat = p->philos[f].teat;
 	p->philos[t].tsleep = p->philos[f].tsleep;

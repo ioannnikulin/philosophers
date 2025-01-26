@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/25 21:19:04 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/26 12:53:43 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,10 @@ t_ull			tsull_get(t_s_ull *i, t_s_ull *errno);
 t_ull			tsull_get_release(t_s_ull *i, t_s_ull *errno);
 t_s_ull			*tsull_set(t_s_ull *i, t_ull *oldval, t_ull newval,
 					t_s_ull *errno);
-t_s_ull			*tsull_set_release(t_s_ull *i, t_ull *oldval, t_ull newval, 
+t_s_ull			*tsull_set_release(t_s_ull *i, t_ull *oldval, t_ull newval,
 					t_s_ull *errno);
 t_s_ull			*tsull_add(t_s_ull *i, t_ull val, t_s_ull *errno);
+t_s_ull			*tsull_add_release(t_s_ull *i, t_ull val, t_s_ull *errno);
 t_s_ull			*tsull_or(t_s_ull *i, t_ull val, t_s_ull *errno);
 t_s_ull			*tsull_or_release(t_s_ull *i, t_ull val, t_s_ull *errno);
 t_s_ull			*tsull_nand(t_s_ull *i, t_ull val, t_s_ull *errno);

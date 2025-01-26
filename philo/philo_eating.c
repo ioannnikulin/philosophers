@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_eating.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 18:09:09 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/25 21:17:00 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/26 12:55:37 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,8 @@ int	eat(t_philo *p, t_s_ull *errno)
 	msleep(p->teat, errno, p->props);
 	if (tsull_get_release(errno, 0))
 		return (ret_errno(errno, 7, 7));
-	p->times_eaten ++;
+	if (!tsull_add_release(&p->times_eaten, 1, errno))
+		return (ret_errno(errno, 9, 9));
 	if (put_fork(p, TOOK_L, 1) || put_fork(p, TOOK_R, 1))
 		return (ret_errno(errno, 8, 8));
 	return (0);

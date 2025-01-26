@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosop.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 15:10:05 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/25 19:51:36 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/26 13:50:55 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@
 # define ANY_UNALIVE 96
 # define ANY 1023
 
+# define WRONG_FROM 333
+
 # define PRINT_FULL 1
 # define PRINT_SUBMISSION 2
 # define PRINT_MODE PRINT_SUBMISSION
@@ -61,7 +63,7 @@
 # define REPORT_FATAL 512 /* don't combine with anything 
 							 except for UNLOCK_PRINT */
 # define STAGE_1 1031
-# define STAGE_2 1535
+# define STAGE_2 1527
 
 struct	s_philo;
 
@@ -88,7 +90,7 @@ typedef struct s_props
 	t_s_ull			errno;
 	pthread_t		monitor;
 	t_states		states;
-}	t_props; 
+}	t_props;
 /* full_philos controlled by print_poll too */
 
 /*
@@ -103,10 +105,10 @@ typedef struct s_props
 */
 typedef struct s_philo
 {
-	int			i; 
+	int			i;
 	t_mutex		*l;
 	t_mutex		*r;
-	int			times_eaten;
+	t_s_ull		times_eaten;
 	t_s_ull		state;
 	t_usec		wait_period;
 	t_usec		wait_before;
@@ -114,7 +116,7 @@ typedef struct s_philo
 	t_usec		teat;
 	t_usec		tsleep;
 	t_s_usec	last_meal;
-	int			full_tgt;
+	t_ull		full_tgt;
 	time_t		delta;
 	t_props		*props;
 	t_s_ull		errno;
@@ -151,4 +153,6 @@ t_usec		prepare_to_eat(t_philo *p, t_s_ull *errno);
 int			eat(t_philo *p, t_s_ull *errno);
 int			die_and_drop_forks(t_philo *p, int block_first);
 int			put_fork(t_philo *p, int which, int set_state);
+int			birth(t_philo **p, void *arg);
+void		*philo_sleep(t_philo *p, t_s_ull *errno);
 #endif

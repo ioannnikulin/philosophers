@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_forks.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 18:09:09 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/25 21:32:34 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/25 23:37:04 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,12 @@ static int	set_state_proc(int set_state, t_philo *p, int which, t_s_ull *errno)
 	return (0);
 }
 
-static int	ret(t_philo *p, int mode)
+static int	ret(t_philo *p, int which, int mode)
 {
-	put_fork(p, TOOK_L, 0);
-	put_fork(p, TOOK_R, 0);
+	if (which & TOOK_L)
+		put_fork(p, TOOK_L, 0);
+	if (which & TOOK_R)
+		put_fork(p, TOOK_R, 0);
 	if (mode == ENOUGH)
 		tsull_release(&p->state, &p->errno);
 	return (ret_errno(&p->errno, mode, mode));
@@ -78,12 +80,12 @@ int	take_fork(t_philo *p, int which, int set_state, t_s_ull *errno)
 		return (ret_errno(errno, 4, 4));
 	if ((tsull_get(&p->state, errno) & ANY_UNALIVE)
 		|| tsull_get_release(errno, 0))
-		return (ret(p, ENOUGH));
+		return (ret(p, which, ENOUGH));
 	tsull_release(&p->state, errno);
 	if (set_state_proc(set_state, p, which, errno))
-		return (ret(p, 6));
+		return (ret(p, TOOK_BOTH, 6));
 	report(p, TAKES, mtime(&p->props->tstart, errno, p->props));
 	if (tsull_get_release(errno, 0))
-		return (ret(p, 7));
+		return (ret(p, TOOK_BOTH, 7));
 	return (0);
 }

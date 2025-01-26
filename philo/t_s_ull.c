@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   t_s_ull.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 17:04:10 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/25 19:33:07 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/26 13:24:35 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,7 @@ t_ull	tsull_get_release(t_s_ull *i, t_s_ull *errno)
 	if (!i || tsull_get_release(errno, 0))
 		return (0);
 	ret = tsull_get(i, errno);
-	if (tsull_get_release(errno, 0) || tsull_release(i, errno)
-		|| tsull_get_release(errno, 0))
+	if (tsull_get_release(errno, 0) || tsull_release(i, errno))
 		return (0);
 	return (ret);
 }
@@ -78,7 +77,7 @@ t_s_ull	*tsull_set(t_s_ull *i, t_ull *oldval, t_ull newval, t_s_ull *errno)
 	}
 	if (oldval && !(*oldval & i->v))
 	{
-		tsull_set_release(errno, 0, 3, 0);
+		tsull_set_release(errno, 0, WRONG_FROM, 0);
 		return (0);
 	}
 	i->v = newval;
