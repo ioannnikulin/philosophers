@@ -159,6 +159,21 @@ racecheck8:
 
 #====================================================
 
+test9_cmd = ./$(NAME) 4 800 200 200 5
+
+test9:
+	#
+	$(PREFIX)eval $(test9_cmd)
+	#
+
+memcheck9:
+	$(PREFIX)$(MEMCHECK) $(test9_cmd)
+
+racecheck9:
+	$(PREFIX)$(DATARACE) $(test9_cmd)
+
+#====================================================
+
 invalid_arg11 = ./$(NAME) a 1 2 3
 invalid_arg12 = ./$(NAME) -1 1 2 3
 invalid_arg13 = ./$(NAME) 999999999999999 1 2 3
