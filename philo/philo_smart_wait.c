@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_smart_wait.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inikulin <inikulin@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 18:09:09 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/26 13:51:14 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/29 17:17:28 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,15 +50,17 @@ int	smart_wait(t_philo *p, t_usec before, t_s_ull *errno)
 			return (2);
 		return (0);
 	}
-	towait = (p->wait_before + p->teat + p->tsleep
-			+ tsull_get_release(&p->times_eaten, errno)
-			* (p->wait_period + p->teat + p->tsleep) + p->wait_period);
+	towait = (p->wait_before + tsull_get_release(&p->times_eaten, errno)
+			* (p->wait_period + p->teat + p->tsleep)
+			- p->wait_period * 0.2);
+	wait_time(p, towait);
+	wait_time(p, before);
 	if (towait >= before)
 	{
 		towait -= before;
-		wait_time(p, towait);
 		if (towait > (p->tdie - p->tsleep - p->teat) * 0.7)
 			towait = (p->tdie - p->tsleep - p->teat) * 0.7;
+		wait_time(p, towait);
 		msleep(towait, errno, p->props);
 	}
 	return (tsull_get_release(errno, 0));

@@ -6,7 +6,7 @@
 /*   By: inikulin <inikulin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:54:25 by inikulin          #+#    #+#             */
-/*   Updated: 2025/01/25 19:31:59 by inikulin         ###   ########.fr       */
+/*   Updated: 2025/01/29 16:57:54 by inikulin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	setup(t_props *p)
 	time_t			t;
 	int				e;
 
-	t = p->philos[0].tdie - p->philos[0].tsleep - p->philos[0].teat;
+	t = (p->philos[0].tdie - p->philos[0].tsleep - p->philos[0].teat) * 0.8;
 	if (p->sz == 1)
 	{
 		p->philos[0].wait_before = t;
